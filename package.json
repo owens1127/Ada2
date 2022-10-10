@@ -7,6 +7,8 @@
     "discord.js": "^14.5.0"
   },
   "scripts": {
+    "reload-commands": "node deploy-commands.js",
+    "start-bot": "node index.js",
     "test-bot": "nodemon ./dev/dev-index.js",
     "dev-deploy-commands": "node ./dev/dev-deploy-commands.js"
   },

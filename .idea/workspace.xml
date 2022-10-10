@@ -5,7 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="aa134805-7b83-47d8-9cda-418ad46206bb" name="Changes" comment="Initial Commit">
-      <change afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Procfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/start.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,7 +54,7 @@
       <recent name="$PROJECT_DIR$/dev" />
     </key>
   </component>
-  <component name="RunManager" selected="Node.js.deploy-commands.js">
+  <component name="RunManager" selected="Shell Script.start.sh">
     <configuration name="deploy-commands.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="deploy-commands.js" working-dir="$PROJECT_DIR$">
       <method v="2" />
     </configuration>
@@ -60,6 +62,21 @@
       <envs>
         <env name="DISCORD_TOKEN" value="MTAyODgzMTE4NDA4OTc3NjIxOA.GQ1jg6.aArD5MiyuE1UPzLEpxObMehtGeqJtAImFjJ_KA" />
       </envs>
+      <method v="2" />
+    </configuration>
+    <configuration name="start.sh" type="ShConfigurationType" temporary="true">
+      <option name="SCRIPT_TEXT" value="" />
+      <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
+      <option name="SCRIPT_PATH" value="$PROJECT_DIR$/start.sh" />
+      <option name="SCRIPT_OPTIONS" value="" />
+      <option name="INDEPENDENT_SCRIPT_WORKING_DIRECTORY" value="true" />
+      <option name="SCRIPT_WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="INDEPENDENT_INTERPRETER_PATH" value="true" />
+      <option name="INTERPRETER_PATH" value="/bin/zsh" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="EXECUTE_IN_TERMINAL" value="true" />
+      <option name="EXECUTE_SCRIPT_FILE" value="true" />
+      <envs />
       <method v="2" />
     </configuration>
     <configuration name="dev-deploy-commands" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
@@ -87,9 +104,11 @@
       <item itemvalue="Node.js.deploy-commands.js" />
       <item itemvalue="npm.dev-deploy-commands" />
       <item itemvalue="npm.test-bot" />
+      <item itemvalue="Shell Script.start.sh" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Shell Script.start.sh" />
         <item itemvalue="Node.js.deploy-commands.js" />
         <item itemvalue="npm.dev-deploy-commands" />
         <item itemvalue="npm.test-bot" />
@@ -104,7 +123,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1665362705955</updated>
-      <workItem from="1665362707233" duration="4594000" />
+      <workItem from="1665362707233" duration="4874000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <created>1665417297118</created>
@@ -113,7 +132,14 @@
       <option name="project" value="LOCAL" />
       <updated>1665417297118</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Initial Commit">
+      <created>1665417422493</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1665417422493</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
