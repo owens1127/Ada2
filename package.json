@@ -1,0 +1,17 @@
+{
+  "name": "ada2",
+  "main": "index.js",
+  "version": "1.0.0",
+  "dependencies": {
+    "d2-api-manager": "^1.0.0",
+    "discord.js": "^14.5.0"
+  },
+  "scripts": {
+    "test-bot": "nodemon ./dev/dev-index.js",
+    "dev-deploy-commands": "node ./dev/dev-deploy-commands.js"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.3",
+    "nodemon": "^2.0.20"
+  }
+}
