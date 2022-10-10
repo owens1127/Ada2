@@ -1,25 +1,26 @@
-const fs = require('node:fs');
-const {REST, Routes} = require('discord.js');
+import { REST, Routes } from 'discord.js';
+import fs from 'node:fs';
 
 const token = process.env.TOKEN
 const clientId = process.env.CLIENT_ID
 
 const commands = [];
-const commandFiles = fs.readdirSync('commands').filter(file => file.endsWith('.js'));
-
-for (const file of commandFiles) {
-    const command = require(`./commands/${file}`);
-    commands.push(command.data.toJSON());
-}
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
 const rest = new REST({version: '10'}).setToken(token);
 
 (async () => {
+    for (const file of commandFiles) {
+        const exports = await import(`./commands/${file}`);
+        const command = exports.default;
+        commands.push(command.data.toJSON());
+    }
+
     try {
         console.log(`Started refreshing ${commands.length} application (/) commands.`);
 
         const data = await rest.put(
-            Routes.applicationCommands(clientId),
+            Routes.applicationGuildCommands(clientId, guildId),
             {body: commands}
         );
 

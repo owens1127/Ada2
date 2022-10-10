@@ -1,37 +1,38 @@
 // Require the necessary discord.js classes
-const { Client, GatewayIntentBits, Collection} = require('discord.js');
-const path = require('node:path');
-const fs = require('node:fs');
+import { Client, GatewayIntentBits, Collection} from 'discord.js';
+import fs from 'node:fs';
+
 const token = process.env.TOKEN
 
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
-
-// Commands
 client.commands = new Collection();
-const commandsPath = path.join(__dirname, './commands');
+const commandsPath = './commands';
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
-    const filePath = path.join(commandsPath, file);
-    const command = require(filePath);
+    const filePath = './' + commandsPath + '/' + file;
     // Set a new item in the Collection
     // With the key as the command name and the value as the exported module
-    client.commands.set(command.data.name, command);
+    import(filePath).then((exports) => {
+        const command = exports.default;
+        client.commands.set(command.data.name, command);
+    });
 }
 
-// Events
-const eventsPath = path.join(__dirname, './events');
+const eventsPath = './events';
 const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
 
 for (const file of eventFiles) {
-    const filePath = path.join(eventsPath, file);
-    const event = require(filePath);
-    if (event.once) {
-        client.once(event.name, (...args) => event.execute(...args));
-    } else {
-        client.on(event.name, (...args) => event.execute(...args));
-    }
+    const filePath = './' + eventsPath + '/' + file;
+    import(filePath).then((exports) => {
+        const event = exports.default;
+        if (event.once) {
+            client.once(event.name, (...args) => event.execute(...args));
+        } else {
+            client.on(event.name, (...args) => event.execute(...args));
+        }
+    });
 }
 
 // Login to Discord with your client's token

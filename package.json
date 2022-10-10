@@ -2,8 +2,10 @@
   "name": "ada2",
   "main": "index.js",
   "version": "1.0.0",
+  "type": "module",
   "dependencies": {
-    "d2-api-manager": "^1.0.0",
+    "bungie-api-ts": "^4.19.0",
+    "d2-api-manager": "^1.0.2",
     "discord.js": "^14.5.0"
   },
   "scripts": {
