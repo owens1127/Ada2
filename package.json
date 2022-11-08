@@ -2,20 +2,20 @@
   "name": "ada2",
   "main": "index.js",
   "version": "1.0.0",
-  "type": "module",
+  "type": "commonjs",
   "dependencies": {
-    "bungie-api-ts": "^4.19.0",
-    "d2-api-manager": "^1.0.2",
-    "discord.js": "^14.5.0"
+    "discord.js": "^14.6.0",
+    "oodestiny": "^1.1.13"
   },
   "scripts": {
     "reload-commands": "node deploy-commands.js",
     "start-bot": "node index.js",
-    "test-bot": "nodemon ./dev/dev-index.js",
-    "dev-deploy-commands": "node ./dev/dev-deploy-commands.js"
+    "test-bot": "sh dev/test-bot.sh",
+    "dev-deploy-commands": "sh dev/test-bot-deploy-commands.sh"
   },
   "devDependencies": {
     "dotenv": "^16.0.3",
+    "env-cmd": "^10.0.1",
     "nodemon": "^2.0.20"
   }
 }
