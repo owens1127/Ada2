@@ -5,17 +5,16 @@
   "type": "commonjs",
   "dependencies": {
     "discord.js": "^14.6.0",
-    "oodestiny": "^1.1.13"
+    "oodestiny": "^1.4.8"
   },
   "scripts": {
     "reload-commands": "node deploy-commands.js",
-    "start-bot": "node index.js",
+    "start-bot": "node --experimental-json-modules index.js",
     "test-bot": "sh dev/test-bot.sh",
     "dev-deploy-commands": "sh dev/test-bot-deploy-commands.sh"
   },
   "devDependencies": {
     "dotenv": "^16.0.3",
-    "env-cmd": "^10.0.1",
-    "nodemon": "^2.0.20"
+    "env-cmd": "^10.0.1"
   }
 }

@@ -22,7 +22,7 @@ const rest = new REST({ version: '10' }).setToken(token);
     try {
         console.log(`Started refreshing ${commands.length} application (/) commands.`);
 
-        rest.put(Routes.applicationGuildCommands(clientId, '478229341139107860'), { body: [] })
+        rest.put(Routes.applicationCommands(clientId), { body: [] })
             .then(() => console.log('Successfully removed all commands.'))
             .catch(console.error);
 

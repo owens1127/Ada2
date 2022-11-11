@@ -4,17 +4,25 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="aa134805-7b83-47d8-9cda-418ad46206bb" name="Changes" comment="deploy">
-      <change afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bungie-net-api/client.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/commands/ada.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dev/test-bot.sh" afterDir="false" />
+    <list default="true" id="aa134805-7b83-47d8-9cda-418ad46206bb" name="Changes" comment="updating gitignore">
+      <change afterPath="$PROJECT_DIR$/bungie-net-api/clan.mjs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bungie-net-api/main.mjs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bungie-net-api/profile.mjs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bungie-net-api/vendor.mjs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/commands/channel.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/commands/link.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/commands/mentions.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/commands/mods.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/commands/register.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/guilds.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/users.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/util/util.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bungie-net-api/index.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/ping.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/ping.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bungie-net-api/client.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/ada.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/ping.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/deploy-commands.js" beforeDir="false" afterPath="$PROJECT_DIR$/deploy-commands.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/events/interactionCreate.js" beforeDir="false" afterPath="$PROJECT_DIR$/events/interactionCreate.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/events/ready.js" beforeDir="false" afterPath="$PROJECT_DIR$/events/ready.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
@@ -53,7 +61,7 @@
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;javascript.nodejs.core.library.configured.version&quot;: &quot;16.13.1&quot;,
     &quot;javascript.nodejs.core.library.typings.version&quot;: &quot;16.18.2&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/owen/Programming/Projects/Ada2/dev&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/owen/Programming/Projects/Ada2/bungie-net-api&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -64,18 +72,23 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/dev" />
+      <recent name="$PROJECT_DIR$/bungie-net-api" />
+      <recent name="$PROJECT_DIR$/database" />
       <recent name="$PROJECT_DIR$/commands" />
+      <recent name="$PROJECT_DIR$/dev" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Shell Script.test-bot.sh">
-    <configuration name="client.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/bungie-net-api/client.js" working-dir="$PROJECT_DIR$/bungie-net-api">
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="npm.test-bot">
     <configuration name="index.js" type="NodeJSConfigurationType" nameIsGenerated="true" path-to-js-file="index.js" working-dir="$PROJECT_DIR$">
       <envs>
         <env name="DISCORD_TOKEN" value="MTAyODgzMTE4NDA4OTc3NjIxOA.GQ1jg6.aArD5MiyuE1UPzLEpxObMehtGeqJtAImFjJ_KA" />
       </envs>
+      <method v="2" />
+    </configuration>
+    <configuration name="vendor.mjs" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" node-parameters="--experimental-json-modules" path-to-js-file="$PROJECT_DIR$/bungie-net-api/vendor.mjs" working-dir="$PROJECT_DIR$/bungie-net-api">
       <method v="2" />
     </configuration>
     <configuration name="start.sh" type="ShConfigurationType" temporary="true">
@@ -130,7 +143,7 @@
     </configuration>
     <list>
       <item itemvalue="Node.js.index.js" />
-      <item itemvalue="Node.js.new-client.js" />
+      <item itemvalue="Node.js.vendor.mjs" />
       <item itemvalue="npm.dev-deploy-commands" />
       <item itemvalue="npm.test-bot" />
       <item itemvalue="Shell Script.test-bot.sh" />
@@ -138,10 +151,10 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Shell Script.test-bot.sh" />
-        <item itemvalue="npm.dev-deploy-commands" />
         <item itemvalue="npm.test-bot" />
-        <item itemvalue="Node.js.new-client.js" />
+        <item itemvalue="npm.dev-deploy-commands" />
+        <item itemvalue="Node.js.vendor.mjs" />
+        <item itemvalue="Shell Script.test-bot.sh" />
         <item itemvalue="Shell Script.start.sh" />
       </list>
     </recent_temporary>
@@ -171,7 +184,34 @@
       <workItem from="1667924173556" duration="148000" />
       <workItem from="1667924326610" duration="17000" />
       <workItem from="1667924362736" duration="148000" />
-      <workItem from="1667924527539" duration="124000" />
+      <workItem from="1667924527539" duration="420000" />
+      <workItem from="1667924961074" duration="415000" />
+      <workItem from="1668019880132" duration="690000" />
+      <workItem from="1668020745121" duration="48000" />
+      <workItem from="1668021990635" duration="70000" />
+      <workItem from="1668022155657" duration="1177000" />
+      <workItem from="1668024510013" duration="260000" />
+      <workItem from="1668024951469" duration="1932000" />
+      <workItem from="1668029599006" duration="343000" />
+      <workItem from="1668030074800" duration="533000" />
+      <workItem from="1668031614970" duration="388000" />
+      <workItem from="1668032274717" duration="2475000" />
+      <workItem from="1668034799606" duration="1230000" />
+      <workItem from="1668120438966" duration="820000" />
+      <workItem from="1668123740413" duration="1049000" />
+      <workItem from="1668126599251" duration="106000" />
+      <workItem from="1668126841278" duration="354000" />
+      <workItem from="1668127229484" duration="364000" />
+      <workItem from="1668127998755" duration="52000" />
+      <workItem from="1668128071156" duration="84000" />
+      <workItem from="1668128584268" duration="194000" />
+      <workItem from="1668128945783" duration="43000" />
+      <workItem from="1668130403326" duration="125000" />
+      <workItem from="1668131777724" duration="5085000" />
+      <workItem from="1668149363584" duration="235000" />
+      <workItem from="1668149693403" duration="303000" />
+      <workItem from="1668150066955" duration="15390000" />
+      <workItem from="1668192554479" duration="1931000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <created>1665417297118</created>
@@ -236,7 +276,14 @@
       <option name="project" value="LOCAL" />
       <updated>1665423681770</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="updating gitignore">
+      <created>1667924756983</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1667924756983</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -260,6 +307,7 @@
     <MESSAGE value="fixed index.js" />
     <MESSAGE value="modules" />
     <MESSAGE value="deploy" />
-    <option name="LAST_COMMIT_MESSAGE" value="deploy" />
+    <MESSAGE value="updating gitignore" />
+    <option name="LAST_COMMIT_MESSAGE" value="updating gitignore" />
   </component>
 </project>

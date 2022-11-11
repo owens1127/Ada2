@@ -4,7 +4,7 @@ const path = require('path');
 
 const token = process.env.DISCORD_TOKEN
 
-// Create a new client instance
+// Create a new main instance
 const client = new Client({intents: [GatewayIntentBits.Guilds]});
 client.commands = new Collection();
 
@@ -35,5 +35,5 @@ for (const file of eventFiles) {
     }
 }
 
-// Login to Discord with your client's token
+// Login to Discord with your main's token
 client.login(token);
