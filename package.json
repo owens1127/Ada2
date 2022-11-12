@@ -5,6 +5,7 @@
   "type": "commonjs",
   "dependencies": {
     "discord.js": "^14.6.0",
+    "mysql": "^2.18.1",
     "oodestiny": "^1.4.8"
   },
   "scripts": {

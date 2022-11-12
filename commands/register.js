@@ -13,10 +13,9 @@ module.exports = {
         /** @type string */
         const name = interaction.options.getString('bungie-name');
         try {
-            await linkAccounts(name, interaction.user.id).then((name) => {
-                interaction.editReply({
-                    content: `Discord account ${interaction.user.toString()} successfully linked to Bungie.net account \`${name}\``});
-            });
+            const bungieName = await linkAccounts(name, interaction.user.id)
+            await interaction.editReply({
+                    content: `Discord account ${interaction.user.toString()} successfully linked to Bungie.net account \`${bungieName}\``});
         } catch (e) {
             await interaction.editReply({content: `Failed to link account: \`${e.message}\``});
         }

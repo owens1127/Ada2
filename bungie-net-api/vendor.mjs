@@ -44,6 +44,6 @@ export async function getAdaCombatModsSaleDefinitons() {
     const definition = await getDestinyInventoryItemDefinition();
     return hashes.map(h => definition[h]).filter(d => {
         return d.uiItemDisplayStyle === 'ui_display_style_energy_mod'
-            && d.plug?.plugCategoryIdentifier === 'enhancements.season_v480'
+            && d.plug?.plugCategoryIdentifier.includes('enhancements.season_');
     });
 }

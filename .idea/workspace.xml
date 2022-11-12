@@ -4,28 +4,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="aa134805-7b83-47d8-9cda-418ad46206bb" name="Changes" comment="updating gitignore">
-      <change afterPath="$PROJECT_DIR$/bungie-net-api/clan.mjs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bungie-net-api/main.mjs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bungie-net-api/profile.mjs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bungie-net-api/vendor.mjs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/commands/channel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/commands/link.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/commands/mentions.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/commands/mods.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/commands/register.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/config.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/database/guilds.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/database/users.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/util/util.js" afterDir="false" />
+    <list default="true" id="aa134805-7b83-47d8-9cda-418ad46206bb" name="Changes" comment="basic bot foundation, no SQL">
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/util.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bungie-net-api/client.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/ada.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/ping.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/deploy-commands.js" beforeDir="false" afterPath="$PROJECT_DIR$/deploy-commands.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bungie-net-api/vendor.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/bungie-net-api/vendor.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/channel.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/channel.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/link.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/link.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/mentions.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/mentions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/mods.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/mods.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/register.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/register.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/guilds.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/guilds.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/users.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/events/interactionCreate.js" beforeDir="false" afterPath="$PROJECT_DIR$/events/interactionCreate.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/util.js" beforeDir="false" afterPath="$PROJECT_DIR$/bungie-net-api/util.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,6 +74,7 @@
       <recent name="$PROJECT_DIR$/dev" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/bungie-net-api" />
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
@@ -211,7 +208,8 @@
       <workItem from="1668149363584" duration="235000" />
       <workItem from="1668149693403" duration="303000" />
       <workItem from="1668150066955" duration="15390000" />
-      <workItem from="1668192554479" duration="1931000" />
+      <workItem from="1668192554479" duration="10877000" />
+      <workItem from="1668218286925" duration="848000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <created>1665417297118</created>
@@ -283,7 +281,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667924756983</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="basic bot foundation, no SQL">
+      <created>1668207200240</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1668207200240</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -308,6 +313,7 @@
     <MESSAGE value="modules" />
     <MESSAGE value="deploy" />
     <MESSAGE value="updating gitignore" />
-    <option name="LAST_COMMIT_MESSAGE" value="updating gitignore" />
+    <MESSAGE value="basic bot foundation, no SQL" />
+    <option name="LAST_COMMIT_MESSAGE" value="basic bot foundation, no SQL" />
   </component>
 </project>

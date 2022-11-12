@@ -13,12 +13,14 @@ module.exports = {
         /** @type boolean */
         const mentionable = interaction.options.getBoolean('mentionable');
         try {
-            await toggleMentionable(interaction.user.id).then(() => {
-                interaction.editReply({content: 'Personal mentions set to: ' + mentionable});
-            })
+            const result = await toggleMentionable(interaction.user.id, mentionable);
+            if (result) {
+                await interaction.editReply({content: 'You will now be mentioned in this server when you are missing a mod.'});
+            } else {
+                await interaction.editReply({content: 'You will no longer be mentioned in this server when you are missing a mod.'});
+            }
         } catch (e) {
-            // TODO
-            await interaction.editReply({content: 'Failed to update mentionable status'});
+            await interaction.editReply({content: `Failed to update mentionable status: \`${e.message}\``});
         }
 
 

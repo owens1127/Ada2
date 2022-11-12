@@ -14,12 +14,12 @@ module.exports = {
         /** @type {TextChannel} */
         const channel = interaction.options.getChannel('channel');
         try {
-            await updateAnnounceChannel(channel.id).then(() => {
-                interaction.editReply({content: 'Announcements channel successfully switched to ' + channel.toString()});
+            const updatedChannel = await updateAnnounceChannel(interaction.guild.id, channel);
+            await interaction.editReply({
+                content: 'Announcements channel successfully switched to ' + updatedChannel.toString()
             });
         } catch (e) {
-            // TODO
-            await interaction.editReply({content: 'Failed to update announcement channel'});
+            await interaction.editReply({content: `Failed to update announcement channel: \`${e.message}\``});
         }
 
     }
