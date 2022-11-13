@@ -5,12 +5,12 @@
   "type": "commonjs",
   "dependencies": {
     "discord.js": "^14.6.0",
-    "mysql": "^2.18.1",
+    "mysql2": "^2.3.3",
     "oodestiny": "^1.4.11"
   },
   "scripts": {
     "start": "sh start.sh",
-    "reload-commands": "sh deploy-commands.sh",
+    "reload-commands": "sh dev/deploy-commands.sh",
     "test-bot": "sh dev/test-bot.sh",
     "dev-deploy-commands": "sh dev/test-bot-deploy-commands.sh"
   },

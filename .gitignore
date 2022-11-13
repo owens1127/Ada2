@@ -4,4 +4,3 @@
 start.sh
 deploy-commands.sh
 deploy-commands.js
-*.iml

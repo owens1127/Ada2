@@ -4,28 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="aa134805-7b83-47d8-9cda-418ad46206bb" name="Changes" comment="Added in SQL queries and created database">
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bungie-net-api/manifest.mjs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/commands/help.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/events/dailyReset.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/next-reset.json" afterDir="false" />
+    <list default="true" id="aa134805-7b83-47d8-9cda-418ad46206bb" name="Changes" comment=".gitignore">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bungie-net-api/clan.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/bungie-net-api/clan.mjs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bungie-net-api/main.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/bungie-net-api/main.mjs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bungie-net-api/profile.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/bungie-net-api/profile.mjs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bungie-net-api/util.js" beforeDir="false" afterPath="$PROJECT_DIR$/bungie-net-api/util.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bungie-net-api/vendor.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/bungie-net-api/vendor.mjs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/channel.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/channel.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/link.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/link.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commands/mods.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/mods.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/guilds.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/guilds.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/users.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/util.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/util.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/events/ready.js" beforeDir="false" afterPath="$PROJECT_DIR$/events/ready.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -48,7 +31,9 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="2FvBW4HScmWtDnpRZIXAtuGDHFW" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -56,13 +41,14 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;javascript.nodejs.core.library.configured.version&quot;: &quot;16.13.1&quot;,
     &quot;javascript.nodejs.core.library.typings.version&quot;: &quot;16.18.2&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/owen/Programming/Projects/Ada2/commands&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/owen/Programming/Projects/Ada2&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -74,13 +60,14 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/commands" />
       <recent name="$PROJECT_DIR$/events" />
       <recent name="$PROJECT_DIR$/bungie-net-api" />
       <recent name="$PROJECT_DIR$/database" />
-      <recent name="$PROJECT_DIR$/dev" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/dev" />
       <recent name="$PROJECT_DIR$/bungie-net-api" />
       <recent name="$PROJECT_DIR$" />
     </key>
@@ -156,9 +143,9 @@
     <recent_temporary>
       <list>
         <item itemvalue="npm.test-bot" />
+        <item itemvalue="Shell Script.test-bot.sh" />
         <item itemvalue="npm.dev-deploy-commands" />
         <item itemvalue="Node.js.vendor.mjs" />
-        <item itemvalue="Shell Script.test-bot.sh" />
         <item itemvalue="Shell Script.start.sh" />
       </list>
     </recent_temporary>
@@ -224,6 +211,15 @@
       <workItem from="1668273779547" duration="21319000" />
       <workItem from="1668297265881" duration="7237000" />
       <workItem from="1668353020582" duration="10118000" />
+      <workItem from="1668376736774" duration="15000" />
+      <workItem from="1668376754597" duration="108000" />
+      <workItem from="1668376878000" duration="20000" />
+      <workItem from="1668376912231" duration="45000" />
+      <workItem from="1668376986855" duration="48000" />
+      <workItem from="1668377046128" duration="47000" />
+      <workItem from="1668377103731" duration="86000" />
+      <workItem from="1668377208195" duration="220000" />
+      <workItem from="1668380539915" duration="718000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <created>1665417297118</created>
@@ -309,7 +305,14 @@
       <option name="project" value="LOCAL" />
       <updated>1668219539235</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary=".gitignore">
+      <created>1668376327291</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1668376327291</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -336,6 +339,7 @@
     <MESSAGE value="updating gitignore" />
     <MESSAGE value="basic bot foundation, no SQL" />
     <MESSAGE value="Added in SQL queries and created database" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added in SQL queries and created database" />
+    <MESSAGE value=".gitignore" />
+    <option name="LAST_COMMIT_MESSAGE" value=".gitignore" />
   </component>
 </project>

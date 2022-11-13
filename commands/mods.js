@@ -19,6 +19,7 @@ module.exports = {
                 energy: d.inventoryDefinition.plug.energyCost
             }
         });
+        if (!mods.length)  return await interaction.editReply('Ada is not currently selling any combat style mods.');
         const embeds = mods.map(m => {
             return new EmbedBuilder()
                 .setTitle(m.name)
