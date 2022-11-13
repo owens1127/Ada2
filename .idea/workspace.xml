@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="aa134805-7b83-47d8-9cda-418ad46206bb" name="Changes" comment=".gitignore">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="aa134805-7b83-47d8-9cda-418ad46206bb" name="Changes" comment="bug fixes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/mods.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/mods.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/util.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/util.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -219,7 +217,9 @@
       <workItem from="1668377046128" duration="47000" />
       <workItem from="1668377103731" duration="86000" />
       <workItem from="1668377208195" duration="220000" />
-      <workItem from="1668380539915" duration="718000" />
+      <workItem from="1668380539915" duration="793000" />
+      <workItem from="1668381457927" duration="45000" />
+      <workItem from="1668382087482" duration="68000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <created>1665417297118</created>
@@ -312,7 +312,14 @@
       <option name="project" value="LOCAL" />
       <updated>1668376327291</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="bug fixes">
+      <created>1668381344449</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1668381344450</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -340,6 +347,7 @@
     <MESSAGE value="basic bot foundation, no SQL" />
     <MESSAGE value="Added in SQL queries and created database" />
     <MESSAGE value=".gitignore" />
-    <option name="LAST_COMMIT_MESSAGE" value=".gitignore" />
+    <MESSAGE value="bug fixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="bug fixes" />
   </component>
 </project>
