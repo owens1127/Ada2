@@ -1,6 +1,6 @@
 import { BungieClient, configure } from 'oodestiny';
 import { getAccessTokenFromRefreshToken } from 'oodestiny/util/tokens.js';
-import config from '../config.json'
+import config from '../config.json' assert { type: 'json' }
 
 /**
  * @type {BungieClient}

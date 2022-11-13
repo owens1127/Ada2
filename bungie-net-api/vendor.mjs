@@ -1,6 +1,6 @@
 import { Components } from 'oodestiny/manifest/index.js';
 import { BungieMembershipType, DestinyComponentType } from 'oodestiny/schemas/index.js';
-import config from '../config.json';
+import config from '../config.json' assert { type: 'json' };
 import { client } from './main.mjs';
 import {
     getDefinition,
