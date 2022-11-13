@@ -10,7 +10,6 @@ module.exports = {
                 .setRequired(true)),
     async execute(interaction) {
         await interaction.deferReply()
-
         /** @type string */
         const groupId = groupIdFromLink(interaction.options.getString('url'));
         if (!groupId) {

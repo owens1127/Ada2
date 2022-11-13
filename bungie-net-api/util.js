@@ -1,9 +1,9 @@
 /**
- * @param {import(oodestiny/schemas).DestinyEnergyCostEntry} energy
+ * @param {number} energyType
  * @return {string}
  */
-exports.colorFromEnergy = (energy) => {
-    switch(energy.energyType) {
+exports.colorFromEnergy = (energyType) => {
+    switch(energyType) {
         case 1: // arc
             return '#85e4ff'
         case 2: // solar

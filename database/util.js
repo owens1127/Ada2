@@ -29,10 +29,9 @@ exports.dbQuery = (query, callback) => {
     return new Promise((resolve, reject) => {
         const con = newConnection();
         con.query(query, (err, result) => {
+            console.log('Processed SQL query: ' + query.split('\n').map(l => l.trim()).join(' '));
             if (err) reject(err);
-            else if (callback) {
-                callback(result);
-            }
+            else if (callback) callback(result);
             resolve();
         });
         con.end();

@@ -1,5 +1,6 @@
-const {SlashCommandBuilder, EmbedBuilder} = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { colorFromEnergy } = require('../bungie-net-api/util')
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('mods')
@@ -8,14 +9,14 @@ module.exports = {
         await interaction.deferReply()
         const { getAdaCombatModsSaleDefinitons } = await import('../bungie-net-api/vendor.mjs');
         const mods = (await getAdaCombatModsSaleDefinitons()).map(d => {
-            console.log(d)
             return {
                 // TODO map name to DestinySandboxPerkDefinition?
-                name: d.displayProperties?.name,
-                icon: 'https://bungie.net' + d.displayProperties?.icon,
-                kind: d.itemTypeDisplayName,
-                description: [d.displayProperties?.description, d.tooltipNotifications[0].displayString].join('\n'),
-                energy: d.plug.energyCost,
+                name: d.inventoryDefinition.displayProperties?.name,
+                icon: 'https://bungie.net' + d.inventoryDefinition.displayProperties?.icon,
+                kind: d.inventoryDefinition.itemTypeDisplayName,
+                description: [d.inventoryDefinition.displayProperties?.description,
+                    d.inventoryDefinition.tooltipNotifications[0].displayString].join('\n'),
+                energy: d.inventoryDefinition.plug.energyCost
             }
         });
         const embeds = mods.map(m => {
@@ -25,7 +26,7 @@ module.exports = {
                 .setImage(m.icon)
                 .setColor(colorFromEnergy(m.energy));
         })
-        await interaction.editReply({embeds});
+        await interaction.editReply({ embeds });
 
     }
 };

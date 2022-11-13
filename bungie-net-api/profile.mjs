@@ -1,4 +1,4 @@
-import { BungieMembershipType } from 'oodestiny/schemas/index.js';
+import { BungieMembershipType, DestinyComponentType } from 'oodestiny/schemas/index.js';
 import { client } from './main.mjs';
 
 /**
@@ -20,4 +20,27 @@ export async function findMemberDetails(bungieName) {
                 name: r.Response[0].bungieGlobalDisplayName + "#" + r.Response[0].bungieGlobalDisplayNameCode
             };
     });
+}
+
+/**
+ *
+ * @param hashes
+ * @param membershipId
+ * @param membershipType
+ * @return {Promise<{data: {[hash: string]: DestinyCollectibleState}, membershipId}>}
+ */
+export async function missingMods(hashes, membershipId, membershipType) {
+    const collectibles = (await client.Destiny2.GetProfile({
+        destinyMembershipId: membershipId,
+        membershipType,
+        components: [DestinyComponentType.Collectibles]
+        // privacy might prevent the bot from getting some profiles
+    })).Response.profileCollectibles.data?.collectibles
+    return {
+        membershipId,
+        data: Object.assign({}, ...hashes.map((hash) => (
+            // here we just assume the user has the mod if they are private
+            {[hash]: (collectibles ? collectibles[hash].state : 0)}
+        )))
+    }
 }

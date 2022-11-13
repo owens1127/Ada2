@@ -1,5 +1,5 @@
-const {SlashCommandBuilder, ChannelType, TextChannel} = require('discord.js');
-const {updateAnnounceChannel} = require('../database/guilds');
+const { SlashCommandBuilder, ChannelType, TextChannel } = require('discord.js');
+const { updateAnnounceChannel } = require('../database/guilds.js');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('channel')
@@ -16,10 +16,12 @@ module.exports = {
         try {
             const updatedChannel = await updateAnnounceChannel(interaction.guild.id, channel);
             await interaction.editReply({
-                content: 'Announcements channel successfully switched to ' + updatedChannel.toString()
+                content: 'Announcements channel successfully switched to '
+                    + updatedChannel.toString()
             });
         } catch (e) {
-            await interaction.editReply({content: `Failed to update announcement channel: \`${e.message}\``});
+            await interaction.editReply(
+                { content: `Failed to update announcement channel: \`${e.message}\`` });
         }
 
     }

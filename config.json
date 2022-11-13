@@ -4,5 +4,6 @@
   "characterId": "2305843009468984093",
   "refresh": "CPzJBBKGAgAgxBee3sYWofGkncwBLw6Xduao7tgJNzsqbeBhsQJuybLgAAAAhG+3/z+d+uchkLvDjQNJ9Hpk09qPZFQj7IfdnWvxWYz0GN5+wYG/H6Z9ogAHs1ePAGLdC86uyqfybwO6bjyOc1UctscfDo0wmn3lUDDd7j1+VRwwrrNTKnApA2uxbCQG2WgpmXO9iX+PKC6RX2mZ++50H030Cdt82vCboSI+GZmcRaH/Bo7dCAPn1GRQYBD3mLbknYTzGz7Jg8q28JdYU2woGxouI8+QkV1e7b9Qu30vf/s/xr39X4xHKZQE0nq+rLt0BnCLtFg444Zbxkj+wQtPE9t7A2F1Mc38A1U+5Ok=",
   "userTable" : "users_info",
-  "guildTable" : "guilds_info"
+  "guildTable" : "guilds_info",
+  "UTCResetHour": 17
 }

@@ -1,7 +1,11 @@
-import { Manifest } from 'oodestiny';
+import { Components } from 'oodestiny/manifest/index.js';
 import { BungieMembershipType, DestinyComponentType } from 'oodestiny/schemas/index.js';
-import { client, destinyManifest } from './main.mjs';
-import config from "../config.json";
+import config from '../config.json';
+import { client } from './main.mjs';
+import {
+    getDefinition,
+    getDestinyInventoryItemDefinitions,
+} from './manifest.mjs';
 
 /**
  * Returns the available hashes at Ada-1
@@ -13,37 +17,33 @@ async function getAdaSaleHashes() {
         destinyMembershipId: config.membershipId,
         membershipType: BungieMembershipType.TigerSteam,
         vendorHash: config.ada1Hash,
-        components: [DestinyComponentType.VendorSales]
-    }).then(({Response}) => {
-        return Object.keys(Response.sales.data).map(vid => {
-            return Response.sales.data[vid].itemHash;
+        components: [DestinyComponentType.VendorSales,
+            DestinyComponentType.ItemPerks]
+    }).then(({ Response }) => {
+        return Object.keys(Response.sales.data).map(id => {
+            return Response.sales.data[id].itemHash;
         });
     })
 }
-
-let manifestInventoryItemDefinition = null;
-/**
- * Gets the DestinyInventoryItemDefinition in english
- * @return {Promise<{[p: number]: DestinyInventoryItemDefinition}>}
- */
-async function getDestinyInventoryItemDefinition() {
-    manifestInventoryItemDefinition = manifestInventoryItemDefinition || await Manifest.getDestinyManifestComponent({
-        destinyManifest,
-        tableName: Manifest.Components.DestinyInventoryItemDefinition,
-        language: 'en'
-    });
-    return manifestInventoryItemDefinition;
-}
-
 /**
  * Returns the definitions for all Ada's sales
- * @return {Promise<DestinyInventoryItemDefinition[]>}
+ * @return {Promise<{inventoryDefinition: DestinyInventoryItemDefinition,
+ *          collectibleDefinition: DestinyCollectibleDefinition,
+ *          sandboxDefinition: DestinySandboxPerkDefinition}[]>}
  */
 export async function getAdaCombatModsSaleDefinitons() {
     const hashes = await getAdaSaleHashes();
-    const definition = await getDestinyInventoryItemDefinition();
-    return hashes.map(h => definition[h]).filter(d => {
+    const inventoryItemDefinition = await getDestinyInventoryItemDefinitions();
+    return await Promise.all(hashes.map(h => {
+       return inventoryItemDefinition[h];
+    }).filter(d => {
         return d.uiItemDisplayStyle === 'ui_display_style_energy_mod'
             && d.plug?.plugCategoryIdentifier.includes('enhancements.season_');
-    });
+    }).map(async inventoryDefinition => {
+        return {
+            inventoryDefinition,
+            collectibleDefinition: await getDefinition(Components.DestinyCollectibleDefinition, inventoryDefinition.collectibleHash),
+            sandboxDefinition: await getDefinition(Components.DestinySandboxPerkDefinition, inventoryDefinition.perks[0].perkHash)
+        }
+    }));
 }
