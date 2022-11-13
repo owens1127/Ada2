@@ -1,3 +1,7 @@
-./node_modules
+/node_modules
 *.env
 /dev
+start.sh
+deploy-commands.sh
+deploy-commands.js
+*.iml
