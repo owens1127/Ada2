@@ -5,6 +5,7 @@
   "dependencies": {
     "discord.js": "^14.6.0",
     "mysql2": "^2.3.3",
+    "nodemon": "^2.0.20",
     "oodestiny": "^1.4.12"
   },
   "scripts": {
