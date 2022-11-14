@@ -10,15 +10,16 @@ export async function findMemberDetails(bungieName) {
     const props = bungieName.split('#');
     const displayName = props[0];
     const displayNameCode = parseInt(props[1]);
-    return await client.Destiny2.SearchDestinyPlayerByBungieName(
+    return client.Destiny2.SearchDestinyPlayerByBungieName(
         { membershipType: BungieMembershipType.All },
         { displayName, displayNameCode }).then(r => {
-            if (!r.Response[0]) throw Error('Profile not found');
-            return {
-                membershipId: r.Response[0].membershipId,
-                membershipType: r.Response[0].membershipType,
-                name: r.Response[0].bungieGlobalDisplayName + "#" + r.Response[0].bungieGlobalDisplayNameCode
-            };
+        if (!r.Response[0]) throw Error('Profile not found');
+        return {
+            membershipId: r.Response[0].membershipId,
+            membershipType: r.Response[0].membershipType,
+            name: r.Response[0].bungieGlobalDisplayName + '#'
+                + r.Response[0].bungieGlobalDisplayNameCode
+        };
     });
 }
 
@@ -30,17 +31,20 @@ export async function findMemberDetails(bungieName) {
  * @return {Promise<{data: {[hash: string]: DestinyCollectibleState}, membershipId}>}
  */
 export async function missingMods(hashes, membershipId, membershipType) {
-    const collectibles = (await client.Destiny2.GetProfile({
+    client.Destiny2.GetProfile({
         destinyMembershipId: membershipId,
         membershipType,
         components: [DestinyComponentType.Collectibles]
         // privacy might prevent the bot from getting some profiles
-    })).Response.profileCollectibles.data?.collectibles
-    return {
-        membershipId,
-        data: Object.assign({}, ...hashes.map((hash) => (
-            // here we just assume the user has the mod if they are private
-            {[hash]: (collectibles ? collectibles[hash].state : 0)}
-        )))
-    }
+    }).then(r => {
+        const collectibles = r.Response.profileCollectibles.data?.collectibles
+        return {
+            membershipId,
+            data: Object.assign({}, ...hashes.map((hash) => (
+                // here we just assume the user has the mod if they are private
+                { [hash]: (collectibles ? collectibles[hash].state : 0) }
+            )))
+        }
+    });
+
 }

@@ -2,6 +2,14 @@ const config = require('../config.json');
 const { dbQuery, escape } = require('./util');
 
 /**
+ * @typedef UsersResponse
+ * @property {string} discord_id
+ * @property {string} destiny_membership_id
+ * @property {number} destiny_membership_type
+ * @property {boolean} mentionable
+ */
+
+/**
  *
  * @param userId
  * @param foo
@@ -33,7 +41,7 @@ exports.linkAccounts = async (bungieName, userId) => {
 
 /**
  * Mutates the members dictionary and the pings array
- * @param {{[p:string]: string}} members
+ * @param {{[p:string]: {discord: string, name: string}}} members
  * @param {string[]} pings
  * @return {Promise<void>}
  */
@@ -44,7 +52,7 @@ exports.bungieMembersToMentionable = async (members, pings) => {
                        WHERE destiny_membership_id IN (${escape(Object.keys(members))});`
         await dbQuery(query, resolve);
     }).then(data => {
-        data.forEach(rdp => {
+        data.forEach(/** @type UsersResponse */ rdp => {
             if (rdp.mentionable) pings.push(rdp.discord_id);
             members[rdp.destiny_membership_id].discord = `<@${rdp.discord_id}>`
         })

@@ -25,8 +25,8 @@ export async function getDestinyInventoryItemDefinitions() {
  * @return {Promise<DestinyDefinition>}
  */
 export async function getDefinition(definition, hash) {
-    return (await client.Destiny2.GetDestinyEntityDefinition({
+    client.Destiny2.GetDestinyEntityDefinition({
         entityType: definition,
         hashIdentifier: hash
-    })).Response
+    }).then(r => r.Response);
 }

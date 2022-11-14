@@ -12,7 +12,7 @@ import {
  * @return {Promise<number[]>}
  */
 async function getAdaSaleHashes() {
-    return await client.Destiny2.GetVendor({
+    return client.Destiny2.GetVendor({
         characterId: config.characterId,
         destinyMembershipId: config.membershipId,
         membershipType: BungieMembershipType.TigerSteam,
