@@ -10,7 +10,8 @@ module.exports = {
         console.log(`Daily reset for ${new Date().toDateString()}`);
         try {
             const adaSales = (await (await import('../bungie-net-api/vendor.mjs')).getAdaCombatModsSaleDefinitons())
-            console.log({ adaSales })
+            console.log('Ada is selling...')
+            console.log(adaSales)
             const guilds = await getInfoByGuilds(client);
             const modHashes = adaSales.map(d => d.collectibleDefinition.hash);
             await Promise.all(guilds.map(g => {
@@ -61,14 +62,18 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
             }
         }
     }));
-    /** @type string[]*/
+    // mutates people, I know it's not ideal
+    await bungieMembersToMentionable(people);
+    /** @type string[] */
     const pings = [];
-    // mutates people and pings, I know it's not ideal
-    await bungieMembersToMentionable(people, pings);
     const embeds = [headerEmbed(guildInfo.clan.name),
         ...modsInfo.map(m => {
             const users = Object.keys(people).filter(k => m.missing.includes(k)).map(k => {
-                return people[k].discord || people[k].name;
+                const disc = people[k].discord;
+                if (disc) {
+                    pings.push(disc);
+                    return disc;
+                } else return people[k].name;
             });
             return new EmbedBuilder()
                 .setTitle(m.def.inventoryDefinition.displayProperties.name)
@@ -88,8 +93,11 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
         })
     ];
     guildInfo.channel.send({
-        content: pings.map(p => `<@${p}>`).join(', '),
         embeds
+    }).then(() => {
+        if (pings.length) guildInfo.channel.send({
+            content: pings.map(p => `<@${p}>`).join(', '),
+        });
     })
 }
 

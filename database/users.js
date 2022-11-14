@@ -42,10 +42,9 @@ exports.linkAccounts = async (bungieName, userId) => {
 /**
  * Mutates the members dictionary and the pings array
  * @param {{[p:string]: {discord: string, name: string}}} members
- * @param {string[]} pings
  * @return {Promise<void>}
  */
-exports.bungieMembersToMentionable = async (members, pings) => {
+exports.bungieMembersToMentionable = async (members) => {
     return new Promise(async (resolve) => {
         const query = `SELECT destiny_membership_id, discord_id, mentionable
                        FROM ${config.userTable}
@@ -53,7 +52,6 @@ exports.bungieMembersToMentionable = async (members, pings) => {
         await dbQuery(query, resolve);
     }).then(data => {
         data.forEach(/** @type UsersResponse */ rdp => {
-            if (rdp.mentionable) pings.push(rdp.discord_id);
             members[rdp.destiny_membership_id].discord = `<@${rdp.discord_id}>`
         })
     });

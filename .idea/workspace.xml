@@ -4,8 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="41d2deed-006a-4d0b-b38f-1cc2eb1a763e" name="Changes" comment="">
+    <list default="true" id="41d2deed-006a-4d0b-b38f-1cc2eb1a763e" name="Changes" comment="removed unnecessary await statements">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bungie-net-api/manifest.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/bungie-net-api/manifest.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bungie-net-api/profile.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/bungie-net-api/profile.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/users.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/events/dailyReset.js" beforeDir="false" afterPath="$PROJECT_DIR$/events/dailyReset.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/next-reset.json" beforeDir="false" afterPath="$PROJECT_DIR$/next-reset.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -107,8 +112,16 @@
       <option name="presentableId" value="Default" />
       <updated>1668397961155</updated>
       <workItem from="1668397964566" duration="1450000" />
-      <workItem from="1668399833033" duration="613000" />
+      <workItem from="1668399833033" duration="2173000" />
     </task>
+    <task id="LOCAL-00001" summary="removed unnecessary await statements">
+      <created>1668438231324</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1668438231324</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -124,5 +137,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="removed unnecessary await statements" />
+    <option name="LAST_COMMIT_MESSAGE" value="removed unnecessary await statements" />
   </component>
 </project>

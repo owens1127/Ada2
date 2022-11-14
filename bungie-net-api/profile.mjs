@@ -31,7 +31,7 @@ export async function findMemberDetails(bungieName) {
  * @return {Promise<{data: {[hash: string]: DestinyCollectibleState}, membershipId}>}
  */
 export async function missingMods(hashes, membershipId, membershipType) {
-    client.Destiny2.GetProfile({
+    return client.Destiny2.GetProfile({
         destinyMembershipId: membershipId,
         membershipType,
         components: [DestinyComponentType.Collectibles]
