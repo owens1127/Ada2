@@ -11,7 +11,7 @@
     "start": "sh start.sh",
     "reload-commands": "sh dev/deploy-commands.sh",
     "test-bot": "sh dev/test-bot.sh",
-    "dev-deploy-commands": "sh dev/test-bot-deploy-commands.sh"
+    "test-bot-deploy-commands": "sh dev/test-bot-deploy-commands.sh"
   },
   "devDependencies": {
     "dotenv": "^16.0.3",
