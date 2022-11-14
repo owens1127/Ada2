@@ -33,5 +33,4 @@ function groupIdFromLink(link) {
     } catch (e) {
         return null;
     }
-
 }

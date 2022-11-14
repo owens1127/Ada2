@@ -13,11 +13,11 @@ const config = require('../config.json')
  * @param channel
  * @return {Promise<TextChannel>}
  */
-exports.updateAnnounceChannel = async (guildId, channel) => {
-    // update the announcements_channel
-    const query = `INSERT INTO ${config.guildTable} (guild_id, announcements_channel)
+exports.updateBroadcastChannel = async (guildId, channel) => {
+    // update the broadcast_channel
+    const query = `INSERT INTO ${config.guildTable} (guild_id, broadcast_channel)
                    VALUES (${escape(guildId)}, ${escape(channel.id)}) ON DUPLICATE KEY
-                   UPDATE announcements_channel = ${escape(channel.id)};`
+                   UPDATE broadcast_channel = ${escape(channel.id)};`
     await dbQuery(query);
     return channel;
 }
