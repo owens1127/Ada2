@@ -12,6 +12,7 @@ export const client = await (async () => {
     const newTokens = await getAccessTokenFromRefreshToken(tokens.refresh.value);
     fs.writeFileSync('./tokens.json', JSON.stringify(newTokens, null, 2))
     const bc = new BungieClient(newTokens.access.value);
+    console.log({new_access_token: newTokens.access});
     setInterval(refreshAccessToken, 3000000, bc);
     return bc;
 })();
@@ -20,6 +21,7 @@ function refreshAccessToken(bc) {
     /** @type BungieNetTokens */
     const readTokens = JSON.parse(fs.readFileSync('./tokens.json'));
     getAccessTokenFromRefreshToken(readTokens.refresh.value).then(newTokens => {
+    	console.log({new_access_token: newTokens.access});
         fs.writeFileSync('./tokens.json', JSON.stringify(newTokens, null, 2))
         bc.login(newTokens.access.value);
     });
