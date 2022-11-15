@@ -1,7 +1,13 @@
 import { Manifest } from 'oodestiny';
 import { client } from './main.mjs';
 
-const destinyManifest = (await client.Destiny2.GetDestinyManifest()).Response;
+let destinyManifestCache;
+async function destinyManifest() {
+    destinyManifestCache = destinyManifestCache || await (async () => {
+            return client.Destiny2.GetDestinyManifest().then(r => r.Response);
+        })();
+    return destinyManifestCache;
+}
 const cache = {};
 
 /**
@@ -11,7 +17,7 @@ const cache = {};
 export async function getDestinyInventoryItemDefinitions() {
     cache.DestinyInventoryItemDefinition =
         cache.DestinyInventoryItemDefinition || await Manifest.getDestinyManifestComponent({
-            destinyManifest,
+            destinyManifest: await destinyManifest(),
             tableName: Manifest.Components.DestinyInventoryItemDefinition,
             language: 'en'
         });

@@ -4,13 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="41d2deed-006a-4d0b-b38f-1cc2eb1a763e" name="Changes" comment="removed unnecessary await statements">
+    <list default="true" id="41d2deed-006a-4d0b-b38f-1cc2eb1a763e" name="Changes" comment="manifest was not being re-queried on fail">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bungie-net-api/manifest.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/bungie-net-api/manifest.mjs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bungie-net-api/profile.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/bungie-net-api/profile.mjs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/users.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/events/dailyReset.js" beforeDir="false" afterPath="$PROJECT_DIR$/events/dailyReset.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/next-reset.json" beforeDir="false" afterPath="$PROJECT_DIR$/next-reset.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/mods.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/mods.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,12 +42,16 @@
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm"
+    "nodejs_package_manager_path": "npm",
+    "ts.external.directory.path": "/Applications/IntelliJ IDEA.app/Contents/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/" />
     </key>
   </component>
   <component name="RunManager" selected="npm.test-bot">
@@ -112,7 +113,8 @@
       <option name="presentableId" value="Default" />
       <updated>1668397961155</updated>
       <workItem from="1668397964566" duration="1450000" />
-      <workItem from="1668399833033" duration="2173000" />
+      <workItem from="1668399833033" duration="3500000" />
+      <workItem from="1668539377619" duration="577000" />
     </task>
     <task id="LOCAL-00001" summary="removed unnecessary await statements">
       <created>1668438231324</created>
@@ -121,7 +123,14 @@
       <option name="project" value="LOCAL" />
       <updated>1668438231324</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="fixed missing returns causing undefined errors">
+      <created>1668446907701</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1668446907701</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -140,6 +149,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="removed unnecessary await statements" />
-    <option name="LAST_COMMIT_MESSAGE" value="removed unnecessary await statements" />
+    <MESSAGE value="fixed missing returns causing undefined errors" />
+    <MESSAGE value="manifest was not being re-queried on fail" />
+    <option name="LAST_COMMIT_MESSAGE" value="manifest was not being re-queried on fail" />
   </component>
 </project>
