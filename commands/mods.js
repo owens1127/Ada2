@@ -10,13 +10,13 @@ module.exports = {
         const { getAdaCombatModsSaleDefinitons } = await import('../bungie-net-api/vendor.mjs');
         const mods = (await getAdaCombatModsSaleDefinitons()).map(d => {
             return {
-                // TODO map name to DestinySandboxPerkDefinition?
+                // TODO abstract this with the reset mods info
                 name: d.inventoryDefinition.displayProperties?.name,
                 icon: 'https://bungie.net' + d.inventoryDefinition.displayProperties?.icon,
                 kind: d.inventoryDefinition.itemTypeDisplayName,
                 description: [d.inventoryDefinition.displayProperties?.description,
                     d.inventoryDefinition.tooltipNotifications[0].displayString].join('\n'),
-                energy: d.inventoryDefinition.plug.energyCost
+                energy: d.inventoryDefinition.plug.energyCost.energyType
             }
         });
         if (!mods.length)  return await interaction.editReply('Ada is not currently selling any combat style mods.');

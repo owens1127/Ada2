@@ -87,7 +87,7 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
                     inline: false
                 }, {
                     name: 'Missing',
-                    value: users.join('\n'),
+                    value: users.join('\n') || 'Nobody :)',
                     inline: false
                 })
         })

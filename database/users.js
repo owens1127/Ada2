@@ -51,6 +51,7 @@ exports.bungieMembersToMentionable = async (members) => {
                        WHERE destiny_membership_id IN (${escape(Object.keys(members))});`
         await dbQuery(query, resolve);
     }).then(data => {
+        console.log(data);
         data.forEach(/** @type UsersResponse */ rdp => {
             members[rdp.destiny_membership_id].discord = `<@${rdp.discord_id}>`
         })
