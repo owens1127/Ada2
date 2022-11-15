@@ -4,7 +4,7 @@ const config = require('../config.json')
 /**
  * @typedef GuildResponse
  * @property {string} guild_id
- * @property {string} announcements_channel
+ * @property {string} broadcast_channel
  * @property {string} clan_id}
  */
 /**
@@ -57,6 +57,7 @@ exports.getInfoByGuilds = async (client) => {
                        FROM ${config.guildTable};`
         await dbQuery(query, resolve);
     }).then(async data => {
+        console.log(data);
         /** @type {GuildInfoObject[]} */
         return await Promise.all(data.map(rdp => membersPromise(rdp, client)));
     })
@@ -85,7 +86,7 @@ function membersPromise(rdp, client) {
             resolve({
                 clan: await (await import('../bungie-net-api/clan.mjs')).getClan(rdp.clan_id),
                 guild: await client.guilds.fetch(rdp.guild_id),
-                channel: await client.channels.fetch(rdp.announcements_channel),
+                channel: await client.channels.fetch(rdp.broadcast_channel),
                 members: results
             });
         } catch (e) {
