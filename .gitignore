@@ -2,4 +2,5 @@
 *.env
 /dev
 start.sh
+next-reset.json
 tokens.json
