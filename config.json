@@ -4,5 +4,6 @@
   "characterId": "2305843009468984093",
   "userTable" : "users_info",
   "guildTable" : "guilds_info",
-  "UTCResetHour": 17
+  "UTCResetHour": 17,
+  "images": "1042307315623276584"
 }

@@ -4,6 +4,9 @@ const { bungieMembersToMentionable } = require('../database/users.js');
 const { colorFromEnergy, modEnergyType } = require('../bungie-net-api/util')
 const sharp = require('sharp');
 const fetch = require('node-fetch-commonjs');
+const config = require('../config.json')
+
+const mods = new Map();
 
 module.exports = {
     name: 'dailyReset',
@@ -15,7 +18,10 @@ module.exports = {
             console.log('Ada is selling...')
             console.log(adaSales)
             const guilds = await getInfoByGuilds(client);
-            const modHashes = adaSales.map(d => d.collectibleDefinition.hash);
+            const modHashes = adaSales.map(sale => {
+                storeImage(sale.inventoryDefinition, client)
+                return sale.collectibleDefinition.hash
+            });
             await Promise.all(guilds.map(g => {
                 return sendResetInfo(g, client, modHashes, adaSales).then(() => {
                     console.log(`Sent info to clan ${g.clan.name} in ${g.guild.name}`)
@@ -76,21 +82,14 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
                 if (disc) {
                     pings.push(disc);
                     return disc;
-                } else return people[k].name;
+                } else {
+                    return people[k].name;
+                }
             });
 
-            let elementOverlayImg;
-            m.def.inventoryDefinition.investmentStats.forEach(stat => {
-                elementOverlayImg = modEnergyType(stat.statTypeHash) || elementOverlayImg;
-            });
-            // const img = `${m.def.inventoryDefinition.hash}.png`;
-            const img = await fetch('https://bungie.net' + m.def.inventoryDefinition.displayProperties.icon)
-                .then(res => res.blob())
-                
-               
             return new EmbedBuilder()
                 .setTitle(m.def.inventoryDefinition.displayProperties.name)
-                .setThumbnail(img)
+                .setThumbnail(mods.get(m.def.inventoryDefinition.hash + '.png'))
                 .setColor(colorFromEnergy(m.def.inventoryDefinition.plug.energyCost.energyType))
                 .setTimestamp(Date.now())
                 .setURL(`https://www.light.gg/db/items/${m.def.inventoryDefinition.hash}/`)
@@ -108,9 +107,11 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
     guildInfo.channel.send({
         embeds
     }).then(() => {
-        if (pings.length) guildInfo.channel.send({
-            content: pings.map(p => `<@${p}>`).join(', '),
-        });
+        if (pings.length) {
+            guildInfo.channel.send({
+                content: pings.map(p => `<@${p}>`).join(', ')
+            });
+        }
     })
 }
 
@@ -136,4 +137,37 @@ function headerEmbed(clanName) {
     return new EmbedBuilder()
         .setTitle('Ada 1 Mods Today - Clan ' + clanName)
         .setTimestamp(Date.now())
+}
+
+/**
+ *
+ * @param {DestinyInventoryItemDefinition} def
+ * @param client
+ */
+function storeImage(def, client) {
+    let overlayUrl;
+    def.investmentStats.forEach(stat => {
+        overlayUrl = modEnergyType(stat.statTypeHash) || overlayUrl;
+    });
+    const iconUrl = 'https://bungie.net' + def.displayProperties.icon
+    fetch(iconUrl)
+        .then(res => res.buffer())
+        .then(buff => {
+            return sharp(buff)
+                .composite([{
+                    input: '.' + overlayUrl
+                }])
+                .png()
+                .toBuffer()
+        })
+        .then(img => {
+            const name = def.hash + '.png';
+            client.channels.fetch(config.images).then(channel => channel.send({
+                files: [{
+                    attachment: img,
+                    name,
+                    description: 'A description of the file'
+                }]
+            }).then(m => mods.set(name, m.attachments.first().url)))
+        });
 }
