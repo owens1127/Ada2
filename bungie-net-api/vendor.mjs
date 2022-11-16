@@ -2,10 +2,7 @@ import { Components } from 'oodestiny/manifest/index.js';
 import { BungieMembershipType, DestinyComponentType } from 'oodestiny/schemas/index.js';
 import config from '../config.json' assert { type: 'json' };
 import { client } from './main.mjs';
-import {
-    getDefinition,
-    getDestinyInventoryItemDefinitions,
-} from './manifest.mjs';
+import { getDefinition, getDestinyInventoryItemDefinitions } from './manifest.mjs';
 
 /**
  * Returns the available hashes at Ada-1
@@ -25,6 +22,7 @@ async function getAdaSaleHashes() {
         });
     })
 }
+
 /**
  * Returns the definitions for all Ada's sales
  * @return {Promise<{inventoryDefinition: DestinyInventoryItemDefinition,
@@ -35,15 +33,17 @@ export async function getAdaCombatModsSaleDefinitons() {
     const hashes = await getAdaSaleHashes();
     const inventoryItemDefinition = await getDestinyInventoryItemDefinitions();
     return await Promise.all(hashes.map(h => {
-       return inventoryItemDefinition[h];
+        return inventoryItemDefinition[h];
     }).filter(d => {
         return d.uiItemDisplayStyle === 'ui_display_style_energy_mod'
             && d.plug?.plugCategoryIdentifier.includes('enhancements.season_');
     }).map(async inventoryDefinition => {
         return {
             inventoryDefinition,
-            collectibleDefinition: await getDefinition(Components.DestinyCollectibleDefinition, inventoryDefinition.collectibleHash),
-            sandboxDefinition: await getDefinition(Components.DestinySandboxPerkDefinition, inventoryDefinition.perks[0].perkHash)
+            collectibleDefinition: await getDefinition(Components.DestinyCollectibleDefinition,
+                inventoryDefinition.collectibleHash),
+            sandboxDefinition: await getDefinition(Components.DestinySandboxPerkDefinition,
+                inventoryDefinition.perks[0].perkHash)
         }
     }));
 }

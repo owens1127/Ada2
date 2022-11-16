@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="41d2deed-006a-4d0b-b38f-1cc2eb1a763e" name="Changes" comment="fixed undefined error when no users are missing the mod">
+    <list default="true" id="41d2deed-006a-4d0b-b38f-1cc2eb1a763e" name="Changes" comment="added the elemental overlay to all mods in the embed">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bungie-net-api/vendor.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/bungie-net-api/vendor.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/users.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/events/dailyReset.js" beforeDir="false" afterPath="$PROJECT_DIR$/events/dailyReset.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -114,7 +115,7 @@
       <updated>1668397961155</updated>
       <workItem from="1668397964566" duration="1450000" />
       <workItem from="1668399833033" duration="3500000" />
-      <workItem from="1668539377619" duration="5245000" />
+      <workItem from="1668539377619" duration="8246000" />
     </task>
     <task id="LOCAL-00001" summary="removed unnecessary await statements">
       <created>1668438231324</created>
@@ -144,7 +145,14 @@
       <option name="project" value="LOCAL" />
       <updated>1668541852452</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="added the elemental overlay to all mods in the embed">
+      <created>1668578980807</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1668578980807</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -166,6 +174,7 @@
     <MESSAGE value="fixed missing returns causing undefined errors" />
     <MESSAGE value="manifest was not being re-queried on fail" />
     <MESSAGE value="fixed undefined error when no users are missing the mod" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed undefined error when no users are missing the mod" />
+    <MESSAGE value="added the elemental overlay to all mods in the embed" />
+    <option name="LAST_COMMIT_MESSAGE" value="added the elemental overlay to all mods in the embed" />
   </component>
 </project>

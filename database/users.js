@@ -53,7 +53,7 @@ exports.bungieMembersToMentionable = async (members) => {
     }).then(data => {
         console.log(data);
         data.forEach(/** @type UsersResponse */ rdp => {
-            members[rdp.destiny_membership_id].discord = `<@${rdp.discord_id}>`
+            members[rdp.destiny_membership_id].discord = rdp.discord_id
         })
     });
 

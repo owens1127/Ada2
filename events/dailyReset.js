@@ -75,17 +75,18 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
     await bungieMembersToMentionable(people);
     /** @type string[] */
     const pings = [];
-    const embeds = [headerEmbed(guildInfo.clan.name),
+    const embeds = [headerEmbed(guildInfo.clan),
         ...await Promise.all(modsInfo.map(async m => {
             const users = Object.keys(people).filter(k => m.missing.includes(k)).map(k => {
                 const disc = people[k].discord;
                 if (disc) {
                     pings.push(disc);
-                    return disc;
+                    return people[k].name + `  [<@${disc}>]`;
                 } else {
                     return people[k].name;
                 }
             });
+            console.log({ missing: users })
 
             return new EmbedBuilder()
                 .setTitle(m.def.inventoryDefinition.displayProperties.name)
@@ -130,13 +131,14 @@ async function membersModStatuses(hashes, member) {
 }
 
 /**
- * @param clanName
+ * @param clan
  * @return {EmbedBuilder}
  */
-function headerEmbed(clanName) {
+function headerEmbed(clan) {
     return new EmbedBuilder()
-        .setTitle('Ada 1 Mods Today - Clan ' + clanName)
-        .setTimestamp(Date.now())
+        .setTitle('Ada 1 Mods Today - Clan ' + clan.name + `[${clan.clanInfo.clanCallsign}]`)
+    // TODO Destiny2.GetClanBannerSource for the banner
+    // clan.clanInfo.clanBannerData
 }
 
 /**
