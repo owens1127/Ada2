@@ -5,8 +5,10 @@
   "dependencies": {
     "discord.js": "^14.6.0",
     "mysql2": "^2.3.3",
+    "node-fetch-commonjs": "^3.2.4",
     "nodemon": "^2.0.20",
-    "oodestiny": "^1.4.12"
+    "oodestiny": "^1.4.12",
+    "sharp": "^0.31.2"
   },
   "scripts": {
     "start": "sh start.sh",

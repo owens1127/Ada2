@@ -1,7 +1,9 @@
 const { EmbedBuilder } = require('discord.js');
 const { getInfoByGuilds } = require('../database/guilds.js');
 const { bungieMembersToMentionable } = require('../database/users.js');
-const { colorFromEnergy } = require('../bungie-net-api/util')
+const { colorFromEnergy, modEnergyType } = require('../bungie-net-api/util')
+const sharp = require('sharp');
+const fetch = require('node-fetch-commonjs');
 
 module.exports = {
     name: 'dailyReset',
@@ -62,12 +64,13 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
             }
         }
     }));
+
     // mutates people, I know it's not ideal
     await bungieMembersToMentionable(people);
     /** @type string[] */
     const pings = [];
     const embeds = [headerEmbed(guildInfo.clan.name),
-        ...modsInfo.map(m => {
+        ...await Promise.all(modsInfo.map(async m => {
             const users = Object.keys(people).filter(k => m.missing.includes(k)).map(k => {
                 const disc = people[k].discord;
                 if (disc) {
@@ -75,12 +78,22 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
                     return disc;
                 } else return people[k].name;
             });
+
+            let elementOverlayImg;
+            m.def.inventoryDefinition.investmentStats.forEach(stat => {
+                elementOverlayImg = modEnergyType(stat.statTypeHash) || elementOverlayImg;
+            });
+            // const img = `${m.def.inventoryDefinition.hash}.png`;
+            const img = await fetch('https://bungie.net' + m.def.inventoryDefinition.displayProperties.icon)
+                .then(res => res.blob())
+                
+               
             return new EmbedBuilder()
                 .setTitle(m.def.inventoryDefinition.displayProperties.name)
-                .setThumbnail(
-                    'https://bungie.net' + m.def.inventoryDefinition.displayProperties.icon)
+                .setThumbnail(img)
                 .setColor(colorFromEnergy(m.def.inventoryDefinition.plug.energyCost.energyType))
                 .setTimestamp(Date.now())
+                .setURL(`https://www.light.gg/db/items/${m.def.inventoryDefinition.hash}/`)
                 .addFields({
                     name: m.def.inventoryDefinition.itemTypeDisplayName,
                     value: m.def.sandboxDefinition.displayProperties?.description,
@@ -90,7 +103,7 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
                     value: users.join('\n') || 'Nobody :)',
                     inline: false
                 })
-        })
+        }))
     ];
     guildInfo.channel.send({
         embeds

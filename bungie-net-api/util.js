@@ -18,3 +18,18 @@ exports.colorFromEnergy = (energyType) => {
     }
 
 }
+
+exports.modEnergyType = (statTypeHash) => {
+    switch(statTypeHash) {
+        // DestinyStatDefinition comes from the DestinyInventoryItemDefinition.investmentStats array
+        case 2399985800: // void
+            return '/res/void_overlay.png';
+        case 3344745325: // solar
+            return '/res/solar_overlay.png';
+        case 3779394102: // arc
+            return '/res/arc_overlay.png';
+        case 998798867: // stasis
+            return '/res/stasis_overlay.png';
+        default: return null;
+    }
+}

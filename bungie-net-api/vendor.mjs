@@ -18,7 +18,7 @@ async function getAdaSaleHashes() {
         membershipType: BungieMembershipType.TigerSteam,
         vendorHash: config.ada1Hash,
         components: [DestinyComponentType.VendorSales,
-            DestinyComponentType.ItemPerks]
+            DestinyComponentType.ItemPerks, DestinyComponentType.ItemStats]
     }).then(({ Response }) => {
         return Object.keys(Response.sales.data).map(id => {
             return Response.sales.data[id].itemHash;
