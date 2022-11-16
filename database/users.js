@@ -27,14 +27,17 @@ exports.toggleMentionable = async (userId, foo) => {
  *
  * @param bungieName
  * @param userId
+ * @param mentionable
  * @return {Promise<string>}
  */
-exports.linkAccounts = async (bungieName, userId) => {
+exports.linkAccounts = async (bungieName, userId, mentionable) => {
     const { findMemberDetails } = await import('../bungie-net-api/profile.mjs');
     const member = await findMemberDetails(bungieName);
-    const query = `INSERT INTO ${config.userTable} (discord_id, destiny_membership_id, destiny_membership_type) 
-                        VALUES(${escape(userId)}, ${escape(member.membershipId)}, ${escape(member.membershipType)}) 
-                   ON DUPLICATE KEY UPDATE destiny_membership_id = ${escape(member.membershipId)}, destiny_membership_type = ${escape(member.membershipType)};`
+    const query = `INSERT INTO ${config.userTable} (discord_id, destiny_membership_id, destiny_membership_type, mentionable) 
+                        VALUES(${escape(userId)}, ${escape(member.membershipId)}, ${escape(member.membershipType)}, ${mentionable}) 
+                   ON DUPLICATE KEY UPDATE destiny_membership_id = ${escape(member.membershipId)}, 
+                       destiny_membership_type = ${escape(member.membershipType)},
+                       mentionable = ${mentionable};`
     await dbQuery(query);
     return member.name;
 }
