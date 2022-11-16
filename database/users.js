@@ -61,3 +61,23 @@ exports.bungieMembersToMentionable = async (members) => {
     });
 
 }
+
+/**
+ *
+ * @param userId
+ * @param delta
+ * @return {Promise<string>}
+ */
+exports.updateReminderTime = async (userId, delta) => {
+    const query = `INSERT INTO ${config.userTable} (discord_id, remind_time)
+                        VALUES(${escape(userId)}, ${escape(delta % 24)})
+                   ON DUPLICATE KEY UPDATE remind_time = ${escape(delta % 24)};`
+    await dbQuery(query);
+    if (delta >= 0) {
+        const minutes = Math.round((delta % 1) * 60);
+        return `${Math.floor(delta)} hours, ${minutes} minutes after reset`
+    } else {
+        const minutes = Math.round((delta % 1) * -60);
+        return `${Math.ceil(delta)/-1} hours, ${minutes} minutes before reset`
+    }
+}
