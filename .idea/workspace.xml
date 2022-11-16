@@ -4,11 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="41d2deed-006a-4d0b-b38f-1cc2eb1a763e" name="Changes" comment="added the elemental overlay to all mods in the embed">
+    <list default="true" id="41d2deed-006a-4d0b-b38f-1cc2eb1a763e" name="Changes" comment="added better command logging">
+      <change afterPath="$PROJECT_DIR$/commands/remindme.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bungie-net-api/vendor.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/bungie-net-api/vendor.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/channel.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/channel.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/help.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/help.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/link.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/link.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/mentions.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/mentions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/mods.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/mods.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/register.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/register.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/users.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/events/dailyReset.js" beforeDir="false" afterPath="$PROJECT_DIR$/events/dailyReset.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,22 +38,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/owen/Projects/Ada-2&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;/Applications/IntelliJ IDEA.app/Contents/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "/Users/owen/Projects/Ada-2/commands",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "ts.external.directory.path": "/Applications/IntelliJ IDEA.app/Contents/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/commands" />
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -115,7 +121,7 @@
       <updated>1668397961155</updated>
       <workItem from="1668397964566" duration="1450000" />
       <workItem from="1668399833033" duration="3500000" />
-      <workItem from="1668539377619" duration="8246000" />
+      <workItem from="1668539377619" duration="13438000" />
     </task>
     <task id="LOCAL-00001" summary="removed unnecessary await statements">
       <created>1668438231324</created>
@@ -152,7 +158,35 @@
       <option name="project" value="LOCAL" />
       <updated>1668578980807</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="added more logging context">
+      <created>1668619289898</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1668619289898</updated>
+    </task>
+    <task id="LOCAL-00007" summary="fixed duplicate pings, added more info to embeds">
+      <created>1668621293168</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1668621293169</updated>
+    </task>
+    <task id="LOCAL-00008" summary="added mentionable parameter to register command">
+      <created>1668621310680</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1668621310680</updated>
+    </task>
+    <task id="LOCAL-00009" summary="added better command logging">
+      <created>1668621683125</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1668621683125</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -175,6 +209,10 @@
     <MESSAGE value="manifest was not being re-queried on fail" />
     <MESSAGE value="fixed undefined error when no users are missing the mod" />
     <MESSAGE value="added the elemental overlay to all mods in the embed" />
-    <option name="LAST_COMMIT_MESSAGE" value="added the elemental overlay to all mods in the embed" />
+    <MESSAGE value="added more logging context" />
+    <MESSAGE value="fixed duplicate pings, added more info to embeds" />
+    <MESSAGE value="added mentionable parameter to register command" />
+    <MESSAGE value="added better command logging" />
+    <option name="LAST_COMMIT_MESSAGE" value="added better command logging" />
   </component>
 </project>

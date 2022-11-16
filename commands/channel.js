@@ -20,6 +20,7 @@ module.exports = {
                     + updatedChannel.toString()
             });
         } catch (e) {
+            console.error(e);
             await interaction.editReply(
                 { content: `Failed to update broadcast channel: \`${e.message}\`` });
         }

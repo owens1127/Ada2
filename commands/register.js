@@ -22,6 +22,7 @@ module.exports = {
             await interaction.editReply({
                     content: `Discord account ${interaction.user.toString()} successfully linked to Bungie.net account \`${bungieName}\` with mentions set to \`${mentionable}\``});
         } catch (e) {
+            console.error(e);
             await interaction.editReply({content: `Failed to link account: \`${e.message}\``});
         }
 

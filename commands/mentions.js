@@ -20,6 +20,7 @@ module.exports = {
                 await interaction.editReply({content: 'You will no longer be mentioned in this server when you are missing a mod.'});
             }
         } catch (e) {
+            console.error(e);
             await interaction.editReply({content: `Failed to update mentionable status: \`${e.message}\``});
         }
 

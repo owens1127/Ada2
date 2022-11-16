@@ -22,6 +22,7 @@ module.exports = {
             const name = await linkGuild(interaction.guild.id, groupId);
             await interaction.editReply({content: `Clan \`${name}\` successfully linked`});
         } catch (e) {
+            console.error(e);
             await interaction.editReply({content: `Failed to link clan: \`${e.message}\``});
         }
     }
