@@ -73,14 +73,14 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
 
     // mutates people, I know it's not ideal
     await bungieMembersToMentionable(people);
-    /** @type string[] */
-    const pings = [];
+    /** @type Set<string> */
+    const pings = new Set();
     const embeds = [headerEmbed(guildInfo.clan),
         ...await Promise.all(modsInfo.map(async m => {
             const users = Object.keys(people).filter(k => m.missing.includes(k)).map(k => {
                 const disc = people[k].discord;
                 if (disc) {
-                    pings.push(disc);
+                    pings.add(disc);
                     return people[k].name + `  [<@${disc}>]`;
                 } else {
                     return people[k].name;
@@ -108,9 +108,9 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
     guildInfo.channel.send({
         embeds
     }).then(() => {
-        if (pings.length) {
+        if (pings.size) {
             guildInfo.channel.send({
-                content: pings.map(p => `<@${p}>`).join(', ')
+                content: [...pings].map(p => `<@${p}>`).join(', ')
             });
         }
     })
@@ -137,6 +137,17 @@ async function membersModStatuses(hashes, member) {
 function headerEmbed(clan) {
     return new EmbedBuilder()
         .setTitle('Ada 1 Mods Today - Clan ' + clan.name + `[${clan.clanInfo.clanCallsign}]`)
+        .addFields({
+            name: 'Combat-Style Mods',
+            value: 'Missing a mod? Head to Ada-1 in the tower and go purchase it! '
+                + 'Every day Ada has a small chance to sell powerful combat-style mods '
+                + 'from previous seasons that are not otherwise acquirable.',
+            inline: false
+        }, {
+            name: 'Never miss a mod!',
+            value: 'Want to be pinged? Try `/mentions true` to never miss out when Ada is selling a mod you are missing!',
+            inline: false
+        })
     // TODO Destiny2.GetClanBannerSource for the banner
     // clan.clanInfo.clanBannerData
 }
