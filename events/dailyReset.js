@@ -6,9 +6,12 @@ const sharp = require('sharp');
 const fetch = require('node-fetch-commonjs');
 const fs = require('node:fs');
 const config = require('../config.json')
-
-const mods = new Map();
-const peopleToRemind = new Set();
+/**
+ *
+ * @type {{[p: string]: Map<string,string[]>}}
+ */
+const peopleToRemind = {}
+const modIcons = {}
 
 module.exports = {
     name: 'dailyReset',
@@ -34,8 +37,9 @@ module.exports = {
                 // make sure we have the right "day"
                 date.setUTCHours(date.getUTCHours() - config.UTCResetHour)
                 date.setUTCHours(config.UTCResetHour)
-                const data = JSON.stringify({ time:  date.getTime(), users: [...peopleToRemind] }, null, 2);
-                fs.writeFileSync('./reminders.json', data);
+                console.log(peopleToRemind);
+                // const data = JSON.stringify({ validTil:  date.getTime(), users: [...peopleToRemind] }, null, 2);
+                // fs.writeFileSync('./reminders.json', data);
             })
             .then(() => resetListener.emit('success'));
         } catch (e) {
@@ -50,7 +54,8 @@ module.exports = {
  * @param client
  * @param {number[]} modHashes
  * @param {{inventoryDefinition: DestinyInventoryItemDefinition, collectibleDefinition:
- *     DestinyCollectibleDefinition, sandboxDefinition: DestinySandboxPerkDefinition}[]} modDefs
+ *     DestinyCollectibleDefinition, sandboxDefinition:
+ *     DestinySandboxPerkDefinition}[]} modDefs
  * @return Promise<void>
  */
 async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
@@ -93,7 +98,12 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
                 if (disc) {
                     if (people[k].mentionable) pings.add(disc);
                     // could be 0, which is a falsy value
-                    if (people[k].reset_time !== null) peopleToRemind.add(disc);
+                    const time = people[k].reset_time
+                    if (time) {
+                        if (!peopleToRemind[time]) peopleToRemind[time] = new Map();
+                        if(!peopleToRemind[time].get(disc)) peopleToRemind[time].set(disc, []);
+                        peopleToRemind[time].get(disc).push(m.def.inventoryDefinition.displayProperties.name);
+                    }
                     return people[k].name + `  [<@${disc}>]`;
                 } else {
                     return people[k].name;
@@ -103,7 +113,7 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
 
             return new EmbedBuilder()
                 .setTitle(m.def.inventoryDefinition.displayProperties.name)
-                .setThumbnail(mods.get(m.def.inventoryDefinition.hash + '.png'))
+                .setThumbnail(modIcons.get(m.def.inventoryDefinition.hash + '.png'))
                 .setColor(colorFromEnergy(m.def.inventoryDefinition.plug.energyCost.energyType))
                 .setTimestamp(Date.now())
                 .setURL(`https://www.light.gg/db/items/${m.def.inventoryDefinition.hash}/`)
@@ -132,7 +142,8 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
 /**
  * @param {number[]} hashes
  * @param {{membershipId: string, membershipType: string}[]} member
- * @return {Promise<{[membershipId: string]: {[hash: string]: DestinyCollectibleState}}>}
+ * @return {Promise<{[membershipId: string]: {[hash: string]:
+ *     DestinyCollectibleState}}>}
  */
 async function membersModStatuses(hashes, member) {
     return await Promise.all(member.map(async m => {
@@ -194,6 +205,6 @@ function storeImage(def, client) {
                     name,
                     description: 'A description of the file'
                 }]
-            }).then(m => mods.set(name, m.attachments.first().url)))
+            }).then(m => modIcons.set(name, m.attachments.first().url)))
         });
 }

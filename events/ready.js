@@ -1,12 +1,14 @@
 const fs = require('node:fs');
 const EventEmitter = require('events');
 const config = require('../config.json');
+
 module.exports = {
     name: 'ready',
     once: true,
     execute(client) {
         console.log(`Ready! Logged in as ${client.user.tag}`);
-        tryReset(client);
+        resets(client);
+        reminders(client);
     }
 };
 
@@ -14,7 +16,7 @@ module.exports = {
  * Attempts to do daily reset functionality, sets a timeout for a new call if it doesn't
  * @param client
  */
-function tryReset(client) {
+function resets(client) {
     const { time } = require('../next-reset.json');
     const now = Date.now()
     if (now > time) {
@@ -33,7 +35,7 @@ function tryReset(client) {
             next.setUTCDate(next.getUTCDate() + 1);
             next.setUTCHours(config.UTCResetHour, 0, 30, 0)
             // apparently this doesn't grow the stack, so we're good
-            setTimeout(tryReset, next.getTime() - Date.now(), client);
+            setTimeout(resets, next.getTime() - Date.now(), client);
             writeOut();
         })
         resetListener.once('failure', error => {
@@ -47,7 +49,7 @@ function tryReset(client) {
             }
             const timeout = next.getTime() - Date.now()
             console.log({ timeout })
-            setTimeout(tryReset, timeout, client);
+            setTimeout(resets, timeout, client);
             writeOut();
         })
     } else {
@@ -55,6 +57,17 @@ function tryReset(client) {
         const date = new Date(timeout)
         console.log(
             `Next daily reset in: ${date.getUTCHours()} hours, ${date.getUTCMinutes()} minutes, ${date.getUTCSeconds()} seconds, ${date.getUTCMilliseconds()} ms`)
-        setTimeout(tryReset, timeout, client);
+        setTimeout(resets, timeout, client);
     }
+}
+
+function reminders(client) {
+    const reminders = require('../reminders.json');
+    const delta = "x"
+    if (reminders.validTil > Date.now()) {
+        Object.keys(reminders.users[delta]).forEach(id => {
+            client.users.fetch(id).send(`Hey <@${id}>, this is your reminder to go pick up ${reminders.users[delta][id].join(' and ')}!`)
+        });
+    }
+    setTimeout(reminders, 60000, client);
 }

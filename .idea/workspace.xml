@@ -4,13 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="41d2deed-006a-4d0b-b38f-1cc2eb1a763e" name="Changes" comment="added better command logging">
-      <change beforePath="$PROJECT_DIR$/.idea/Ada-2.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Ada-2.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="41d2deed-006a-4d0b-b38f-1cc2eb1a763e" name="Changes" comment="adding in reminders">
+      <change afterPath="$PROJECT_DIR$/reminders.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/users.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/events/dailyReset.js" beforeDir="false" afterPath="$PROJECT_DIR$/events/dailyReset.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/events/ready.js" beforeDir="false" afterPath="$PROJECT_DIR$/events/ready.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -203,7 +201,14 @@
       <option name="project" value="LOCAL" />
       <updated>1668621683125</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="adding in reminders">
+      <created>1668644598239</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1668644598239</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -230,6 +235,7 @@
     <MESSAGE value="fixed duplicate pings, added more info to embeds" />
     <MESSAGE value="added mentionable parameter to register command" />
     <MESSAGE value="added better command logging" />
-    <option name="LAST_COMMIT_MESSAGE" value="added better command logging" />
+    <MESSAGE value="adding in reminders" />
+    <option name="LAST_COMMIT_MESSAGE" value="adding in reminders" />
   </component>
 </project>
