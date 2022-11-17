@@ -1,6 +1,7 @@
 const fs = require('node:fs');
 const EventEmitter = require('events');
 const config = require('../config.json');
+const { getMembersPerDelta } = require('../database/users.js');
 
 module.exports = {
     name: 'ready',
@@ -8,7 +9,10 @@ module.exports = {
     execute(client) {
         console.log(`Ready! Logged in as ${client.user.tag}`);
         resets(client);
-        reminders(client);
+        // always happen halfway thru the minute to help w/ edge cases;
+        setTimeout(setInterval, (90 - new Date().getUTCSeconds()) % 60 * 1000,
+            // check every 3 minutes. Note the SQL query MUST use 0.05 intervals
+            reminders, 3 * 60000, client);
     }
 };
 
@@ -62,12 +66,24 @@ function resets(client) {
 }
 
 function reminders(client) {
-    const reminders = require('../reminders.json');
-    const delta = "x"
-    if (reminders.validTil > Date.now()) {
-        Object.keys(reminders.users[delta]).forEach(id => {
-            client.users.fetch(id).send(`Hey <@${id}>, this is your reminder to go pick up ${reminders.users[delta][id].join(' and ')}!`)
-        });
+    const { validTil, missing } = require('../reminders.json');
+    const today = new Date();
+    const delta = ((today.getUTCHours() - config.UTCResetHour) + 24) % 24 + today.getUTCMinutes()
+        / 60
+    if (validTil > Date.now()) {
+        getMembersPerDelta(delta).then(ids => {
+            ids.forEach(id => {
+                if (missing[id].length) {
+                    client.users.fetch(id).then(u => u.send(
+                        `Hey <@${id}>, this is your reminder to go pick up ${missing[id].join(
+                            ' and ')} from Ada!`).catch(e => {
+                        console.error('Failed to message ' + u.username)
+                    }))
+                        .catch(e => {
+                            console.error('Failed find user ' + id)
+                        })
+                }
+            })
+        })
     }
-    setTimeout(reminders, 60000, client);
 }

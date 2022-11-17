@@ -1,17 +1,16 @@
+const fs = require('node:fs');
+const { bungieMembersToMentionable } = require('../database/users.js');
 const { EmbedBuilder } = require('discord.js');
 const { getInfoByGuilds } = require('../database/guilds.js');
-const { bungieMembersToMentionable } = require('../database/users.js');
 const { colorFromEnergy, modEnergyType } = require('../bungie-net-api/util')
 const sharp = require('sharp');
 const fetch = require('node-fetch-commonjs');
-const fs = require('node:fs');
 const config = require('../config.json')
-/**
- *
- * @type {{[p: string]: Map<string,string[]>}}
- */
-const peopleToRemind = {}
-const modIcons = {}
+
+/** @type {{[person: string]: string[]}} */
+const peopleMissingMods = {}
+
+const modIcons = new Map();
 
 module.exports = {
     name: 'dailyReset',
@@ -32,16 +31,8 @@ module.exports = {
                     console.log(`Sent info to clan ${g.clan.name} in ${g.guild.name}`)
                 })
             }))
-            .then(() => {
-                const date = new Date();
-                // make sure we have the right "day"
-                date.setUTCHours(date.getUTCHours() - config.UTCResetHour)
-                date.setUTCHours(config.UTCResetHour)
-                console.log(peopleToRemind);
-                // const data = JSON.stringify({ validTil:  date.getTime(), users: [...peopleToRemind] }, null, 2);
-                // fs.writeFileSync('./reminders.json', data);
-            })
-            .then(() => resetListener.emit('success'));
+                .then(updateMissingCache)
+                .then(() => resetListener.emit('success'));
         } catch (e) {
             resetListener.emit('failure', e);
         }
@@ -69,7 +60,7 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
             membershipId: m.destinyUserInfo.membershipId,
             membershipType: m.destinyUserInfo.membershipType
         }
-    }))
+    }));
     const modsInfo = modHashes.map(hash => {
         const def = modDefs.find(def => def.collectibleDefinition.hash === hash);
         const missing = [];
@@ -88,6 +79,7 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
     }));
 
     // mutates people, I know it's not ideal
+    console.log(typeof bungieMembersToMentionable);
     await bungieMembersToMentionable(people);
     /** @type Set<string> */
     const pings = new Set();
@@ -97,13 +89,8 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
                 const disc = people[k].discord;
                 if (disc) {
                     if (people[k].mentionable) pings.add(disc);
-                    // could be 0, which is a falsy value
-                    const time = people[k].reset_time
-                    if (time) {
-                        if (!peopleToRemind[time]) peopleToRemind[time] = new Map();
-                        if(!peopleToRemind[time].get(disc)) peopleToRemind[time].set(disc, []);
-                        peopleToRemind[time].get(disc).push(m.def.inventoryDefinition.displayProperties.name);
-                    }
+                    if (!peopleMissingMods[disc]) peopleMissingMods[disc] = [];
+                    peopleMissingMods[disc].push(m.def.inventoryDefinition.displayProperties.name);
                     return people[k].name + `  [<@${disc}>]`;
                 } else {
                     return people[k].name;
@@ -207,4 +194,19 @@ function storeImage(def, client) {
                 }]
             }).then(m => modIcons.set(name, m.attachments.first().url)))
         });
+}
+
+function updateMissingCache() {
+    const reset = new Date();
+    // make sure we have the right "day"
+    reset.setUTCHours(reset.getUTCHours() - config.UTCResetHour);
+    reset.setUTCHours(config.UTCResetHour);
+    reset.setUTCDate(reset.getUTCDate() + 1);
+    const data = JSON.stringify(
+        {
+            validTil: reset.getTime(),
+            missing: peopleMissingMods
+        }, null,
+        2);
+    fs.writeFileSync('./reminders.json', data);
 }
