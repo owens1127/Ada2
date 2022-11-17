@@ -3,6 +3,8 @@ const { Client, GatewayIntentBits, Collection } = require('discord.js');
 const fs = require('node:fs');
 const path = require('path');
 
+console.log(process.env);
+
 const token = process.env.DISCORD_TOKEN
 
 // Create a new main instance

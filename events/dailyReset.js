@@ -4,9 +4,11 @@ const { bungieMembersToMentionable } = require('../database/users.js');
 const { colorFromEnergy, modEnergyType } = require('../bungie-net-api/util')
 const sharp = require('sharp');
 const fetch = require('node-fetch-commonjs');
+const fs = require('node:fs');
 const config = require('../config.json')
 
 const mods = new Map();
+const peopleToRemind = new Set();
 
 module.exports = {
     name: 'dailyReset',
@@ -26,7 +28,16 @@ module.exports = {
                 return sendResetInfo(g, client, modHashes, adaSales).then(() => {
                     console.log(`Sent info to clan ${g.clan.name} in ${g.guild.name}`)
                 })
-            })).then(() => resetListener.emit('success'));
+            }))
+            .then(() => {
+                const date = new Date();
+                // make sure we have the right "day"
+                date.setUTCHours(date.getUTCHours() - config.UTCResetHour)
+                date.setUTCHours(config.UTCResetHour)
+                const data = JSON.stringify({ time:  date.getTime(), users: [...peopleToRemind] }, null, 2);
+                fs.writeFileSync('./reminders.json', data);
+            })
+            .then(() => resetListener.emit('success'));
         } catch (e) {
             resetListener.emit('failure', e);
         }
@@ -80,7 +91,9 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
             const users = Object.keys(people).filter(k => m.missing.includes(k)).map(k => {
                 const disc = people[k].discord;
                 if (disc) {
-                    pings.add(disc);
+                    if (people[k].mentionable) pings.add(disc);
+                    // could be 0, which is a falsy value
+                    if (people[k].reset_time !== null) peopleToRemind.add(disc);
                     return people[k].name + `  [<@${disc}>]`;
                 } else {
                     return people[k].name;

@@ -7,6 +7,7 @@ const { dbQuery, escape } = require('./util');
  * @property {string} destiny_membership_id
  * @property {number} destiny_membership_type
  * @property {boolean} mentionable
+ * @property {number} reset_time
  */
 
 /**
@@ -44,7 +45,6 @@ exports.linkAccounts = async (bungieName, userId, mentionable) => {
 
 /**
  * Mutates the members dictionary and the pings array
- * @param {{[p:string]: {discord: string, name: string}}} members
  * @return {Promise<void>}
  */
 exports.bungieMembersToMentionable = async (members) => {
@@ -57,6 +57,8 @@ exports.bungieMembersToMentionable = async (members) => {
         console.log(data);
         data.forEach(/** @type UsersResponse */ rdp => {
             members[rdp.destiny_membership_id].discord = rdp.discord_id
+            members[rdp.destiny_membership_id].mentionable = !!rdp.mentionable
+            members[rdp.destiny_membership_id].reset_time = rdp.reset_time
         })
     });
 
