@@ -2,7 +2,7 @@ const {SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const {linkGuild} = require('../database/guilds');
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('link')
+        .setName('clan')
         .setDescription('Link this server to a clan')
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .setDMPermission(false)
