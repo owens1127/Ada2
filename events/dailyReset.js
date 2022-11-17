@@ -84,7 +84,7 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
     /** @type Set<string> */
     const pings = new Set();
     const embeds = [headerEmbed(guildInfo.clan),
-        ...await Promise.all(modsInfo.map(async m => {
+        ...modsInfo.map(m => {
             const users = Object.keys(people).filter(k => m.missing.includes(k)).map(k => {
                 const disc = people[k].discord;
                 if (disc) {
@@ -110,17 +110,20 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
                     inline: false
                 }, {
                     name: 'Missing',
-                    value: users.join('\n') || 'Nobody :)',
+                    value: users.sort((a,b) => a.localeCompare(b)).join('\n') || 'Nobody :)',
                     inline: false
                 })
-        }))
+        })
     ];
     guildInfo.channel.send({
         embeds
     }).then(() => {
         if (pings.size) {
             guildInfo.channel.send({
-                content: [...pings].map(p => `<@${p}>`).join(', ')
+                content: [...pings]
+                    .sort((a,b) => a.localeCompare(b))
+                    .map(p => `<@${p}>`)
+                    .join(', ')
             });
         }
     })
