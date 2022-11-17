@@ -1,6 +1,5 @@
 const config = require('../config.json');
 const { dbQuery, escape } = require('./util');
-const { updateMissingCache, timeKey, peopleToRemind } = require('../misc/util.js');
 
 /**
  * @typedef UsersResponse
@@ -19,12 +18,12 @@ const { updateMissingCache, timeKey, peopleToRemind } = require('../misc/util.js
  */
 exports.toggleMentionable = async (userId, foo) => {
     if (!await inDb(userId)) throw new Error('You must /register first');
-    const query = `UPDATE ${config.userTable} SET mentionable = ${foo}
-                    WHERE discord_id = ${escape(userId)};`
+    const query = `UPDATE ${config.userTable}
+                   SET mentionable = ${foo}
+                   WHERE discord_id = ${escape(userId)};`
     await dbQuery(query);
     return foo;
 }
-
 
 /**
  *
@@ -34,8 +33,9 @@ exports.toggleMentionable = async (userId, foo) => {
  */
 exports.updateReminderTime = async (userId, delta) => {
     if (!await inDb(userId)) throw new Error('You must /register first');
-    const query = `UPDATE ${config.userTable} SET remind_time = ${escape(delta % 24)}
-                    WHERE discord_id = ${escape(userId)}`
+    const query = `UPDATE ${config.userTable}
+                   SET remind_time = ${escape(delta % 24)}
+                   WHERE discord_id = ${escape(userId)}`
     await dbQuery(query);
     if (delta >= 0) {
         const minutes = Math.round((delta % 1) * 60);
@@ -54,8 +54,9 @@ exports.updateReminderTime = async (userId, delta) => {
  */
 exports.disableReminders = async (userId) => {
     if (!await inDb(userId)) throw new Error('You be registered to disable reminders');
-    const query = `UPDATE ${config.userTable} SET remind_time = NULL
-                    WHERE discord_id = ${escape(userId)};`
+    const query = `UPDATE ${config.userTable}
+                   SET remind_time = NULL
+                   WHERE discord_id = ${escape(userId)};`
     await dbQuery(query);
 }
 
@@ -85,19 +86,18 @@ exports.linkAccounts = async (bungieName, userId, mentionable) => {
  * @return {Promise<void>}
  */
 exports.bungieMembersToMentionable = async (members) => {
-    return new Promise(async (resolve) => {
-        const query = `SELECT destiny_membership_id, discord_id, mentionable, remind_time
-                       FROM ${config.userTable}
-                       WHERE destiny_membership_id IN (${escape(Object.keys(members))});`
-        await dbQuery(query, resolve);
-    }).then(data => {
-        console.log(data);
-        data.forEach(/** @type UsersResponse */rdp => {
-            members[rdp.destiny_membership_id].discord = rdp.discord_id
-            members[rdp.destiny_membership_id].mentionable = !!rdp.mentionable
-            members[rdp.destiny_membership_id].remind_time = rdp.remind_time
-        })
-    });
+    const query = `SELECT destiny_membership_id, discord_id, mentionable, remind_time
+                   FROM ${config.userTable}
+                   WHERE destiny_membership_id IN (${escape(Object.keys(members))});`
+    await dbQuery(query)
+        .then(data => {
+            console.log(data);
+            data.forEach(/** @type UsersResponse */rdp => {
+                members[rdp.destiny_membership_id].discord = rdp.discord_id
+                members[rdp.destiny_membership_id].mentionable = !!rdp.mentionable
+                members[rdp.destiny_membership_id].remind_time = rdp.remind_time
+            })
+        });
 }
 
 /**
@@ -106,16 +106,15 @@ exports.bungieMembersToMentionable = async (members) => {
  * @return {Promise<string[]>}
  */
 exports.getMembersPerDelta = async (delta) => {
-    return new Promise(async (resolve) => {
-        const query = `SELECT discord_id
-                       FROM ${config.userTable}
-                       WHERE MOD(remind_time + 24, 24) > ${round(delta - 1/60, 2)}
-                            AND MOD(remind_time + 24, 24) <= ${round(delta, 2)};`
-        await dbQuery(query, resolve);
-    }).then(data => {
-        console.log(data);
-        return data.map(data => data.discord_id);
-    });
+    const query = `SELECT discord_id
+                   FROM ${config.userTable}
+                   WHERE MOD(remind_time + 24, 24) > ${round(delta - 1 / 60, 2)}
+                     AND MOD(remind_time + 24, 24) <= ${round(delta, 2)};`
+    return dbQuery(query)
+        .then(data => {
+            console.log(data);
+            return data.map(data => data.discord_id);
+        });
 }
 
 function round(n, d) {
@@ -127,9 +126,5 @@ async function inDb(userId) {
     const query = `SELECT COUNT(1)
                    FROM ${config.userTable}
                    WHERE discord_id = ${userId};`
-    let count;
-    await dbQuery(query, (data) => {
-        count = data[0]['COUNT(1)'];
-    });
-    return !!count;
+    return !!(await dbQuery(query))[0]['COUNT(1)'];
 }

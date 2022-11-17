@@ -17,7 +17,7 @@ exports.updateBroadcastChannel = async (guildId, channel) => {
     // update the broadcast_channel
     const query = `INSERT INTO ${config.guildTable} (guild_id, broadcast_channel)
                    VALUES (${escape(guildId)}, ${escape(channel.id)}) ON DUPLICATE KEY
-                   UPDATE broadcast_channel = ${escape(channel.id)};`
+    UPDATE broadcast_channel = ${escape(channel.id)};`
     await dbQuery(query);
     return channel;
 }
@@ -52,14 +52,14 @@ exports.linkGuild = async (guildId, clanId) => {
  * @return {Promise<GuildInfoObject[]>}
  */
 exports.getInfoByGuilds = async (client) => {
-    return new Promise(async (resolve) => {
-        const query = `SELECT *
-                       FROM ${config.guildTable};`
-        await dbQuery(query, resolve);
-    }).then(async data => {
+
+    const query = `SELECT *
+                   FROM ${config.guildTable};`
+    return dbQuery(query).then(async data => {
         console.log(data);
         /** @type {GuildInfoObject[]} */
-        return await Promise.all(data.filter(rdp => !!rdp.clan_id).map(rdp => membersPromise(rdp, client)));
+        return await Promise.all(
+            data.filter(rdp => !!rdp.clan_id).map(rdp => membersPromise(rdp, client)));
     })
 }
 
@@ -78,11 +78,11 @@ function membersPromise(rdp, client) {
             let results = [];
             do {
                 members = await getMembers(rdp.clan_id, page);
+                results.push(...members.results);
                 page++;
             }
-            while (members.hasMore) {
-                results.push(...members.results);
-            }
+            while (members.hasMore);
+
             resolve({
                 clan: await (await import('../bungie-net-api/clan.mjs')).getClan(rdp.clan_id),
                 guild: await client.guilds.fetch(rdp.guild_id),

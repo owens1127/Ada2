@@ -11,7 +11,7 @@ function newConnection() {
         if (err) throw err
     });
     con.on('error', err => {
-        console.error('[mysql error]',err);
+        console.error('[mysql error]', err);
     });
     return con;
 }
@@ -21,18 +21,16 @@ exports.escape = (val) => {
 }
 /**
  *
- * @param {string} query
- * @param {function(result: {})?} callback
- * @return Promise<void>
+ * @param query
+ * @return {Promise<RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>}
  */
-exports.dbQuery = (query, callback) => {
+exports.dbQuery = (query) => {
     return new Promise((resolve, reject) => {
         const con = newConnection();
         con.query(query, (err, result) => {
             console.log('Processed SQL query: ' + query.split('\n').map(l => l.trim()).join(' '));
             if (err) reject(err);
-            else if (callback) callback(result);
-            resolve();
+            resolve(result);
         });
         con.end();
     });
