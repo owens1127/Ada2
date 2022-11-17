@@ -50,6 +50,17 @@ exports.updateReminderTime = async (userId, delta) => {
 
 /**
  *
+ * @param userId
+ */
+exports.disableReminders = async (userId) => {
+    if (!await inDb(userId)) throw new Error('You be registered to disable reminders');
+    const query = `UPDATE ${config.userTable} SET remind_time = NULL
+                    WHERE discord_id = ${escape(userId)};`
+    await dbQuery(query);
+}
+
+/**
+ *
  * @param bungieName
  * @param userId
  * @param mentionable
