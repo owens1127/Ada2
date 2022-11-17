@@ -150,7 +150,7 @@ async function membersModStatuses(hashes, member) {
  */
 function headerEmbed(clan) {
     return new EmbedBuilder()
-        .setTitle('Ada 1 Mods Today - Clan ' + clan.name + `[${clan.clanInfo.clanCallsign}]`)
+        .setTitle('Ada 1 Mods Today - Clan ' + clan.name + ` [${clan.clanInfo.clanCallsign}]`)
         .addFields({
             name: 'Combat-Style Mods',
             value: 'Missing a mod? Head to Ada-1 in the tower and go purchase it! '
