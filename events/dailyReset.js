@@ -1,10 +1,11 @@
 const fs = require('node:fs');
-const { bungieMembersToMentionable } = require('../database/users.js');
-const { EmbedBuilder } = require('discord.js');
-const { getInfoByGuilds } = require('../database/guilds.js');
-const { colorFromEnergy, modEnergyType } = require('../bungie-net-api/util')
 const sharp = require('sharp');
 const fetch = require('node-fetch-commonjs');
+const { EmbedBuilder } = require('discord.js');
+const { bungieMembersToMentionable } = require('../database/users.js');
+const { getInfoByGuilds } = require('../database/guilds.js');
+const { colorFromEnergy, modEnergyType } = require('../bungie-net-api/util')
+const { nextReset } = require('../misc/util.js');
 const config = require('../config.json')
 
 /** @type {{[person: string]: string[]}} */
@@ -155,7 +156,7 @@ function headerEmbed(clan) {
             inline: false
         }, {
             name: 'Never miss a mod!',
-            value: 'Want to be pinged? Try `/mentions true` to never miss out when Ada is selling a mod you are missing!',
+            value: 'Want to be pinged? `/register` with your Bungie Name and do `/mentions true` to never miss out when Ada is selling a mod you are missing!',
             inline: false
         })
     // TODO Destiny2.GetClanBannerSource for the banner
@@ -196,11 +197,7 @@ function storeImage(def, client) {
 }
 
 function updateMissingCache() {
-    const reset = new Date();
-    // make sure we have the right "day"
-    reset.setUTCHours(reset.getUTCHours() - config.UTCResetHour);
-    reset.setUTCHours(config.UTCResetHour);
-    reset.setUTCDate(reset.getUTCDate() + 1);
+    const reset = nextReset();
     const data = JSON.stringify(
         {
             validTil: reset.getTime(),

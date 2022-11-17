@@ -17,3 +17,13 @@ exports.timeKey = (delta) => {
     const utcTime = (delta + 24 + config.UTCResetHour) % 24;
     return Math.floor(utcTime) + ':' + Math.round(utcTime % 1 * 60)
 }
+
+/** @return {Date} */
+exports.nextReset = () => {
+    const reset = new Date();
+    // make sure we have the right "day"
+    reset.setUTCHours(reset.getUTCHours() - config.UTCResetHour);
+    reset.setUTCHours(config.UTCResetHour, 0, 0, 0);
+    reset.setUTCDate(reset.getUTCDate() + 1);
+    return reset;
+}

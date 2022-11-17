@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('discord.js');
 const { updateReminderTime, disableReminders } = require('../database/users');
 
 module.exports = {
+    remindString,
     data: new SlashCommandBuilder()
         .setName('remindme')
         .setDescription('What time should the bot remind you about a mod?')
@@ -22,22 +23,15 @@ module.exports = {
         if (interaction.options.getSubcommand() === 'time') {
             /** @type number */
             const delta = interaction.options.getNumber('delta');
-            if (delta <= -24 || delta >= 24) {
-                return await interaction.reply(
-                    { content: 'Please enter a valid number between -23.99 and 23.99' });
-            }
             await interaction.deferReply();
             try {
-                const timeString = await updateReminderTime(interaction.user.id, delta);
-                await interaction.editReply(
-                    { content: `Updated reminder time to \`${timeString}\`` });
+                const str = await remindString(interaction.user.id, delta)
+                await interaction.editReply({ content: `Updated reminder time to \`${str}\`.` })
             } catch (e) {
-                console.error(e);
-                await interaction.editReply(
-                    { content: `Failed to update reminder time: \`${e.message}\`` });
+                await interaction.editReply({ content: `Failed to update reminder time: \`${e.message}\``})
             }
         } else if (interaction.options.getSubcommand() === 'disable') {
-            await interaction.deferReply();
+            interaction.deferReply();
             try {
                 await disableReminders(interaction.user.id)
                 await interaction.editReply(
@@ -50,3 +44,16 @@ module.exports = {
         }
     }
 };
+
+/**
+ *
+ * @param delta
+ * @param id
+ * @return {Promise<string>}
+ */
+async function remindString(id, delta) {
+    if (delta <= -24 || delta >= 24) {
+        throw new Error('Please enter a valid number between -23.99 and 23.99');
+    }
+    return await updateReminderTime(id, delta);
+}
