@@ -4,15 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="41d2deed-006a-4d0b-b38f-1cc2eb1a763e" name="Changes" comment="added support for messaging for /remindme">
-      <change afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="41d2deed-006a-4d0b-b38f-1cc2eb1a763e" name="Changes" comment="added more command features">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/remindme.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/remindme.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/guilds.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/guilds.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/users.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/clan.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/clan.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/events/dailyReset.js" beforeDir="false" afterPath="$PROJECT_DIR$/events/dailyReset.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/events/ready.js" beforeDir="false" afterPath="$PROJECT_DIR$/events/ready.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/reminders.json" beforeDir="false" afterPath="$PROJECT_DIR$/reminders.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -65,17 +60,6 @@
     </key>
   </component>
   <component name="RunManager" selected="npm.test-bot">
-    <configuration name="deploy-commands" type="BatchConfigurationType" factoryName="Batch" temporary="true">
-      <module name="Ada-2" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="WORKING_DIRECTORY" value="C:\Programming\Projects\Discord Bots\Ada2\dev" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SCRIPT_NAME" value="deploy-commands.bat" />
-      <option name="PARAMETERS" value="" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="test-bot" type="BatchConfigurationType" factoryName="Batch" temporary="true">
       <module name="Ada-2" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -102,6 +86,16 @@
       <envs />
       <method v="2" />
     </configuration>
+    <configuration name="reload-commands" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="reload-commands" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
     <configuration name="test-bot-deploy-commands" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="run" />
@@ -125,8 +119,9 @@
     <recent_temporary>
       <list>
         <item itemvalue="npm.test-bot" />
-        <item itemvalue="Shell Script.test-bot.sh" />
         <item itemvalue="npm.test-bot-deploy-commands" />
+        <item itemvalue="npm.reload-commands" />
+        <item itemvalue="Shell Script.test-bot.sh" />
       </list>
     </recent_temporary>
   </component>
@@ -141,7 +136,7 @@
       <workItem from="1668397964566" duration="1450000" />
       <workItem from="1668399833033" duration="3500000" />
       <workItem from="1668539377619" duration="13438000" />
-      <workItem from="1668703690869" duration="3466000" />
+      <workItem from="1668703690869" duration="7740000" />
     </task>
     <task id="LOCAL-00001" summary="removed unnecessary await statements">
       <created>1668438231324</created>
@@ -220,7 +215,42 @@
       <option name="project" value="LOCAL" />
       <updated>1668664666767</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="debugged /remindme">
+      <created>1668707369165</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1668707369165</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Added permissions to commands">
+      <created>1668716653785</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1668716653785</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Added disable /remindme subcommand">
+      <created>1668716689214</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1668716689214</updated>
+    </task>
+    <task id="LOCAL-00015" summary="renamed /link to /clan">
+      <created>1668716747219</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1668716747219</updated>
+    </task>
+    <task id="LOCAL-00016" summary="added more command features">
+      <created>1668719122168</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1668719122168</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -249,6 +279,11 @@
     <MESSAGE value="added better command logging" />
     <MESSAGE value="adding in reminders" />
     <MESSAGE value="added support for messaging for /remindme" />
-    <option name="LAST_COMMIT_MESSAGE" value="added support for messaging for /remindme" />
+    <MESSAGE value="debugged /remindme" />
+    <MESSAGE value="Added permissions to commands" />
+    <MESSAGE value="Added disable /remindme subcommand" />
+    <MESSAGE value="renamed /link to /clan" />
+    <MESSAGE value="added more command features" />
+    <option name="LAST_COMMIT_MESSAGE" value="added more command features" />
   </component>
 </project>

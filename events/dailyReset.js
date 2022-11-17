@@ -29,7 +29,7 @@ module.exports = {
             });
             await Promise.all(guilds.map(g => {
                 return sendResetInfo(g, client, modHashes, adaSales).then(() => {
-                    console.log(`Sent info to clan ${g.clan.name} in ${g.guild.name}`)
+                    console.log(`Sent info to ${g.guild.name} for clan ${g.clan.name}`)
                 })
             }))
                 .then(updateMissingCache)

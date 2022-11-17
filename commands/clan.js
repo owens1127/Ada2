@@ -16,7 +16,7 @@ module.exports = {
         const groupId = groupIdFromLink(interaction.options.getString('url'));
         if (!groupId) {
             await interaction.editReply(
-                {content: 'Invalid clan URL. Should match the form https://www.bungie.net/en/ClanV2?groupid=0000000'});
+                {content: 'Invalid clan URL. Should match the form <https://www.bungie.net/en/ClanV2?groupid=0000000>'});
             return;
         }
 
