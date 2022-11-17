@@ -4,11 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="41d2deed-006a-4d0b-b38f-1cc2eb1a763e" name="Changes" comment="adding in reminders">
-      <change afterPath="$PROJECT_DIR$/reminders.json" afterDir="false" />
+    <list default="true" id="41d2deed-006a-4d0b-b38f-1cc2eb1a763e" name="Changes" comment="added support for messaging for /remindme">
+      <change afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/remindme.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/remindme.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/guilds.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/guilds.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/users.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/events/dailyReset.js" beforeDir="false" afterPath="$PROJECT_DIR$/events/dailyReset.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/events/ready.js" beforeDir="false" afterPath="$PROJECT_DIR$/events/ready.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reminders.json" beforeDir="false" afterPath="$PROJECT_DIR$/reminders.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,26 +38,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "javascript.nodejs.core.library.configured.version": "19.1.0",
-    "javascript.nodejs.core.library.typings.version": "18.11.9",
-    "last_opened_file_path": "/Users/owen/Projects/Ada-2/commands",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "ts.external.directory.path": "/Applications/IntelliJ IDEA.app/Contents/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;javascript.nodejs.core.library.configured.version&quot;: &quot;18.12.1&quot;,
+    &quot;javascript.nodejs.core.library.typings.version&quot;: &quot;18.11.9&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/owen/Projects/Ada-2&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Applications/IntelliJ IDEA.app/Contents/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/commands" />
       <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/commands" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/" />
@@ -118,8 +124,6 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Batch.test-bot" />
-        <item itemvalue="Batch.deploy-commands" />
         <item itemvalue="npm.test-bot" />
         <item itemvalue="Shell Script.test-bot.sh" />
         <item itemvalue="npm.test-bot-deploy-commands" />
@@ -137,6 +141,7 @@
       <workItem from="1668397964566" duration="1450000" />
       <workItem from="1668399833033" duration="3500000" />
       <workItem from="1668539377619" duration="13438000" />
+      <workItem from="1668703690869" duration="3466000" />
     </task>
     <task id="LOCAL-00001" summary="removed unnecessary await statements">
       <created>1668438231324</created>
@@ -208,7 +213,14 @@
       <option name="project" value="LOCAL" />
       <updated>1668644598239</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="added support for messaging for /remindme">
+      <created>1668664666767</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1668664666767</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -236,6 +248,7 @@
     <MESSAGE value="added mentionable parameter to register command" />
     <MESSAGE value="added better command logging" />
     <MESSAGE value="adding in reminders" />
-    <option name="LAST_COMMIT_MESSAGE" value="adding in reminders" />
+    <MESSAGE value="added support for messaging for /remindme" />
+    <option name="LAST_COMMIT_MESSAGE" value="added support for messaging for /remindme" />
   </component>
 </project>

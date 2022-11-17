@@ -18,11 +18,34 @@ const { updateMissingCache, timeKey, peopleToRemind } = require('../misc/util.js
  * @return {Promise<boolean>}
  */
 exports.toggleMentionable = async (userId, foo) => {
-    const query = `INSERT INTO ${config.userTable} (discord_id, mentionable)
-                   VALUES (${escape(userId)}, ${escape(foo)}) ON DUPLICATE KEY
-    UPDATE mentionable = ${escape(foo)};`
+    if (!await inDb(userId)) throw new Error('You must /register first');
+    const query = `UPDATE ${config.userTable} SET mentionable = ${foo}
+                    WHERE discord_id = ${escape(userId)};`
     await dbQuery(query);
     return foo;
+}
+
+
+/**
+ *
+ * @param userId
+ * @param delta
+ * @return {Promise<string>}
+ */
+exports.updateReminderTime = async (userId, delta) => {
+    if (!await inDb(userId)) throw new Error('You must /register first');
+    const query = `UPDATE ${config.userTable} SET remind_time = ${escape(delta % 24)}
+                    WHERE discord_id = ${escape(userId)}`
+    await dbQuery(query);
+    if (delta >= 0) {
+        const minutes = Math.round((delta % 1) * 60);
+        const hrs = Math.floor(delta);
+        return `${hrs} hour${hrs === 1 ? '' : 's'}, ${minutes} minutes after reset`
+    } else {
+        const minutes = Math.round((delta % 1) * -60);
+        const hrs = Math.ceil(delta) / -1;
+        return `${hrs} hour${hrs === 1 ? '' : 's'}, ${minutes} minutes before the next reset`
+    }
 }
 
 /**
@@ -68,37 +91,34 @@ exports.bungieMembersToMentionable = async (members) => {
 
 /**
  *
- * @param userId
- * @param delta
- * @return {Promise<string>}
- */
-exports.updateReminderTime = async (userId, delta) => {
-    const query = `INSERT INTO ${config.userTable} (discord_id, remind_time)
-                   VALUES (${escape(userId)}, ${escape(delta % 24)}) ON DUPLICATE KEY
-    UPDATE remind_time = ${escape(delta % 24)};`
-    await dbQuery(query);
-    if (delta >= 0) {
-        const minutes = Math.round((delta % 1) * 60);
-        return `${Math.floor(delta)} hours, ${minutes} minutes after reset`
-    } else {
-        const minutes = Math.round((delta % 1) * -60);
-        return `${Math.ceil(delta) / -1} hours, ${minutes} minutes before the next reset`
-    }
-}
-
-/**
- *
- * @param delta
+ * @param {{hours, minutes}}delta
  * @return {Promise<string[]>}
  */
 exports.getMembersPerDelta = async (delta) => {
     return new Promise(async (resolve) => {
         const query = `SELECT discord_id
                        FROM ${config.userTable}
-                       WHERE MOD(remind_time + 24, 24) <= ${delta}
-                            AND MOD(remind_time + 24, 24) > ${delta - 0.05};`
+                       WHERE MOD(remind_time + 24, 24) > ${round(delta - 1/60, 2)}
+                            AND MOD(remind_time + 24, 24) <= ${round(delta, 2)};`
         await dbQuery(query, resolve);
     }).then(data => {
+        console.log(data);
         return data.map(data => data.discord_id);
     });
+}
+
+function round(n, d) {
+    const tens = Math.pow(10, d);
+    return Math.round(tens * n) / tens;
+}
+
+async function inDb(userId) {
+    const query = `SELECT COUNT(1)
+                   FROM ${config.userTable}
+                   WHERE discord_id = ${userId};`
+    let count;
+    await dbQuery(query, (data) => {
+        count = data[0]['COUNT(1)'];
+    });
+    return !!count;
 }

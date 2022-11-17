@@ -7,7 +7,7 @@ module.exports = {
         .setDescription('What time should the bot remind you about a mod?')
         .addNumberOption(option =>
             option.setName('delta')
-                .setDescription('A number from between -23.999 and to 23.999, ' +
+                .setDescription('A number from between -23.99 and 23.99, ' +
                     'the delta from reset. Ex: -3.5 means 3.5h BEFORE reset')
                 .setRequired(true)),
     async execute(interaction) {
@@ -15,7 +15,7 @@ module.exports = {
         const delta = interaction.options.getNumber('delta');
         if (delta <= -24 || delta >= 24) {
             return await interaction.reply(
-                { content: 'Please enter a valid number between -23.999 and 23.999' });
+                { content: 'Please enter a valid number between -23.99 and 23.99' });
         }
         await interaction.deferReply();
         try {

@@ -11,8 +11,8 @@ module.exports = {
         resets(client);
         // always happen halfway thru the minute to help w/ edge cases;
         setTimeout(setInterval, (90 - new Date().getUTCSeconds()) % 60 * 1000,
-            // check every 3 minutes. Note the SQL query MUST use 0.05 intervals
-            reminders, 3 * 60000, client);
+            // check every minute. Note the SQL query MUST use 1/60 intervals
+            reminders, 60000, client);
     }
 };
 
@@ -68,12 +68,12 @@ function resets(client) {
 function reminders(client) {
     const { validTil, missing } = require('../reminders.json');
     const today = new Date();
-    const delta = ((today.getUTCHours() - config.UTCResetHour) + 24) % 24 + today.getUTCMinutes()
-        / 60
+    const delta = ((today.getUTCHours() - config.UTCResetHour) + 24) % 24
+        + today.getUTCMinutes() / 60
     if (validTil > Date.now()) {
         getMembersPerDelta(delta).then(ids => {
             ids.forEach(id => {
-                if (missing[id].length) {
+                if (missing[id]) {
                     client.users.fetch(id).then(u => u.send(
                         `Hey <@${id}>, this is your reminder to go pick up ${missing[id].join(
                             ' and ')} from Ada!`).catch(e => {

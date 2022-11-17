@@ -59,7 +59,7 @@ exports.getInfoByGuilds = async (client) => {
     }).then(async data => {
         console.log(data);
         /** @type {GuildInfoObject[]} */
-        return await Promise.all(data.map(rdp => membersPromise(rdp, client)));
+        return await Promise.all(data.filter(rdp => !!rdp.clan_id).map(rdp => membersPromise(rdp, client)));
     })
 }
 

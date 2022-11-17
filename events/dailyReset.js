@@ -79,7 +79,6 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
     }));
 
     // mutates people, I know it's not ideal
-    console.log(typeof bungieMembersToMentionable);
     await bungieMembersToMentionable(people);
     /** @type Set<string> */
     const pings = new Set();
