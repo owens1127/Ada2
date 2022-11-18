@@ -35,8 +35,8 @@ export async function missingMods(hashes, membershipId, membershipType) {
         destinyMembershipId: membershipId,
         membershipType,
         components: [DestinyComponentType.Collectibles]
-        // privacy might prevent the bot from getting some profiles
     }).then(r => {
+        // note: privacy might prevent some profiles from returning the components
         const collectibles = r.Response.profileCollectibles.data?.collectibles
         return {
             membershipId,

@@ -33,7 +33,6 @@ module.exports = {
 function groupIdFromLink(link) {
     try {
         const params = new URL(link).searchParams
-        console.log(params);
         return params.get('groupid') || params.get('groupId');
     } catch (e) {
         return null;
