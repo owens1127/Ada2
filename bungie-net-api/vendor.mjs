@@ -29,9 +29,9 @@ async function getAdaSaleHashes() {
  *          collectibleDefinition: DestinyCollectibleDefinition,
  *          sandboxDefinition: DestinySandboxPerkDefinition}[]>}
  */
-export async function getAdaCombatModsSaleDefinitons() {
+export async function getAdaCombatModsSaleDefinitons(force) {
     const hashes = await getAdaSaleHashes();
-    const inventoryItemDefinition = await getDestinyInventoryItemDefinitions();
+    const inventoryItemDefinition = await getDestinyInventoryItemDefinitions(force);
     return await Promise.all(hashes.map(h => {
         return inventoryItemDefinition[h];
     }).filter(d => {

@@ -1,26 +1,39 @@
 import { Manifest } from 'oodestiny';
 import { client } from './main.mjs';
 
-let destinyManifestCache;
-async function destinyManifest() {
-    destinyManifestCache = destinyManifestCache || await (async () => {
+const cache = {}
+
+function clearManifestCache() {
+    console.log('Manifest cache cleared')
+    for (let prop in cache){
+        if (cache.hasOwnProperty(prop)){
+            delete cache[prop];
+        }
+    }
+}
+
+async function destinyManifest(force) {
+    console.log('Fetching Destiny 2 Manifest');
+    cache.manifest =
+        cache.manifest && !force ? cache.manifest : await (async () => {
+            setTimeout(clearManifestCache,60 * 60000);
             return client.Destiny2.GetDestinyManifest().then(r => r.Response);
         })();
-    return destinyManifestCache;
+    return cache.manifest;
 }
-const cache = {};
 
 /**
  * Gets the DestinyInventoryItemDefinition in english
  * @return {Promise<{[p: number]: DestinyInventoryItemDefinition}>}
  */
-export async function getDestinyInventoryItemDefinitions() {
+export async function getDestinyInventoryItemDefinitions(force) {
     cache.DestinyInventoryItemDefinition =
-        cache.DestinyInventoryItemDefinition || await Manifest.getDestinyManifestComponent({
-            destinyManifest: await destinyManifest(),
-            tableName: Manifest.Components.DestinyInventoryItemDefinition,
-            language: 'en'
-        });
+        cache.DestinyInventoryItemDefinition && !force ? cache.DestinyInventoryItemDefinition
+            : await Manifest.getDestinyManifestComponent({
+                destinyManifest: await destinyManifest(force),
+                tableName: Manifest.Components.DestinyInventoryItemDefinition,
+                language: 'en'
+            });
     return cache.DestinyInventoryItemDefinition;
 }
 

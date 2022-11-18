@@ -19,7 +19,7 @@ module.exports = {
     async execute(client, resetListener) {
         console.log(`Daily reset for ${new Date().toDateString()}`);
         try {
-            const adaSales = (await (await import('../bungie-net-api/vendor.mjs')).getAdaCombatModsSaleDefinitons())
+            const adaSales = (await (await import('../bungie-net-api/vendor.mjs')).getAdaCombatModsSaleDefinitons(true))
             console.log('Ada is selling...')
             console.log(adaSales)
             const guilds = await getInfoByGuilds(client);
