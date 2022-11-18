@@ -11,6 +11,10 @@ const config = require('../config.json')
 /** @type {{[person: string]: string[]}} */
 const peopleMissingMods = {}
 
+/**
+ *
+ * @type {Map<string, Promise<string>>}
+ */
 const modIcons = new Map();
 
 module.exports = {
@@ -84,7 +88,7 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
     /** @type Set<string> */
     const pings = new Set();
     const embeds = [headerEmbed(guildInfo.clan),
-        ...modsInfo.map(m => {
+        ...await Promise.all(modsInfo.map(async m => {
             const users = Object.keys(people).filter(k => m.missing.includes(k)).map(k => {
                 const disc = people[k].discord;
                 if (disc) {
@@ -100,7 +104,7 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
 
             return new EmbedBuilder()
                 .setTitle(m.def.inventoryDefinition.displayProperties.name)
-                .setThumbnail(modIcons.get(m.def.inventoryDefinition.hash + '.png'))
+                .setThumbnail(await modIcons.get(m.def.inventoryDefinition.hash + '.png'))
                 .setColor(colorFromEnergy(m.def.inventoryDefinition.plug.energyCost.energyType))
                 .setTimestamp(Date.now())
                 .setURL(`https://www.light.gg/db/items/${m.def.inventoryDefinition.hash}/`)
@@ -110,10 +114,10 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
                     inline: false
                 }, {
                     name: 'Missing',
-                    value: users.sort((a,b) => a.localeCompare(b)).join('\n') || 'Nobody :)',
+                    value: users.sort((a, b) => a.localeCompare(b)).join('\n') || 'Nobody :)',
                     inline: false
                 })
-        })
+        }))
     ];
     guildInfo.channel.send({
         embeds
@@ -171,32 +175,31 @@ function headerEmbed(clan) {
  * @param {DestinyInventoryItemDefinition} def
  * @param client
  */
-function storeImage(def, client) {
+async function storeImage(def, client) {
+    const name = def.hash + '.png';
     let overlayUrl;
     def.investmentStats.forEach(stat => {
         overlayUrl = modEnergyType(stat.statTypeHash) || overlayUrl;
     });
     const iconUrl = 'https://bungie.net' + def.displayProperties.icon
-    fetch(iconUrl)
+    modIcons.set(name, fetch(iconUrl)
         .then(res => res.buffer())
-        .then(buff => {
-            return sharp(buff)
+        .then(buff => sharp(buff)
                 .composite([{
                     input: '.' + overlayUrl
                 }])
                 .png()
-                .toBuffer()
-        })
-        .then(img => {
-            const name = def.hash + '.png';
-            client.channels.fetch(config.images).then(channel => channel.send({
+                .toBuffer())
+        .then(img => client.channels.fetch(config.images)
+            .then(channel => channel.send({
                 files: [{
                     attachment: img,
                     name,
                     description: 'A description of the file'
                 }]
-            }).then(m => modIcons.set(name, m.attachments.first().url)))
-        });
+            })))
+        .then(m => m.attachments.first().url)
+        .catch(console.error));
 }
 
 function updateMissingCache() {
