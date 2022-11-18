@@ -130,7 +130,7 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
                     .join(', ')
             });
         }
-    })
+    }).catch(console.error);
 }
 
 /**
