@@ -24,7 +24,6 @@ function sendGreeting(channels, guild) {
         welcome = textChannels.filter(c => !c.nsfw).first();
     }
     welcome.send({
-        content: 'Hi!',
         embeds: [
             new EmbedBuilder()
                 .setTitle('Ada-2 Discord Bot')
@@ -50,6 +49,6 @@ function sendGreeting(channels, guild) {
                 })
         ]
     })
-        .then(m => console.log(`Sent message: ${m.content} in ${m.channel.name}`))
+        .then(m => console.log(`Sent how-to embed in ${m.guild.name} ${m.channel.name}`))
         .catch(console.error)
 }
