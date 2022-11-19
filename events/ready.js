@@ -21,7 +21,7 @@ module.exports = {
  * @param client
  */
 function resets(client) {
-    const { time } = require('../local/next-reset.json');
+    const { time } = JSON.parse(fs.readFileSync('./local/next-reset.json'));
     const now = Date.now()
     if (now > time) {
         let next = new Date(now);
@@ -43,7 +43,7 @@ function resets(client) {
             writeOut();
         })
         resetListener.once('failure', error => {
-            console.error('[WARN] Daily reset failed');
+            console.warn('Daily reset failed');
             console.error(error);
             if (new Date(now).getUTCHours() === config.UTCResetHour) {
                 next.setUTCMinutes(next.getUTCMinutes() + 1);
@@ -66,7 +66,7 @@ function resets(client) {
 }
 
 function reminders(client) {
-    const { validTil, missing } = require('../local/reminders.json');
+    const { validTil, missing } = JSON.parse(fs.readFileSync('./local/reminders.json', 'utf8'));
     const today = new Date();
     const delta = ((today.getUTCHours() - config.UTCResetHour) + 24) % 24
         + today.getUTCMinutes() / 60

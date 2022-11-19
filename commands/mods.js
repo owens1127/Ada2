@@ -9,7 +9,7 @@ module.exports = {
     async execute(interaction) {
         await interaction.deferReply()
         try {
-            const mods = require('../local/mods.json');
+            const mods = JSON.parse(fs.readFileSync('./local/mods.json', 'utf8'));
             if (!Object.keys(mods).length) return await interaction.editReply(
                 'Ada is not currently selling any combat style mods.');
 

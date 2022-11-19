@@ -11,7 +11,7 @@ const config = require('../config.json');
 /** @type {{[person: string]: string[]}} */
 const peopleMissingMods = {}
 /** @type {Map<string, Promise<string>>}*/
- const modIcons = new Map();
+const modIcons = new Map();
 
 module.exports = {
     modToEmbed,
@@ -20,7 +20,8 @@ module.exports = {
     async execute(client, resetListener) {
         console.log(`Daily reset for ${new Date().toDateString()}`);
         try {
-            const adaSales = (await (await import('../bungie-net-api/vendor.mjs')).getAdaCombatModsSaleDefinitons(true))
+            const adaSales = (await (await import('../bungie-net-api/vendor.mjs')).getAdaCombatModsSaleDefinitons(
+                true))
             console.log('Ada is selling...')
             console.log(adaSales)
             const guilds = await getInfoByGuilds(client);
@@ -86,40 +87,45 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
     /** @type {{[p: string]: DefsTriple}} */
     const mods = {}
     const embeds = [headerEmbed(guildInfo.clan),
-    ...await Promise.all(modsInfo.map(async m => {
-        const users = Object.keys(people).filter(k => m.missing.includes(k)).map(k => {
-            const disc = people[k].discord;
-            if (disc) {
-                if (people[k].mentionable) pings.add(disc);
-                if (!peopleMissingMods[disc]) peopleMissingMods[disc] = [];
-                peopleMissingMods[disc].push(m.def.inventoryDefinition.displayProperties.name);
-                return people[k].name + `  [<@${disc}>]`;
-            } else {
-                return people[k].name;
-            }
-        });
-        m.def.icon = await modIcons.get(m.def.inventoryDefinition.hash + '.png');
-        mods[m.def.inventoryDefinition.hash] = m.def;
-        return (await modToEmbed(m.def))
-            .addFields({
-                name: 'Missing',
-                value: users.sort((a, b) => a.localeCompare(b)).join('\n') || 'Nobody :)',
-                inline: false
-            })
-    }))
+        ...await Promise.all(modsInfo.map(async m => {
+            const users = Object.keys(people).filter(k => m.missing.includes(k)).map(k => {
+                const disc = people[k].discord;
+                if (disc) {
+                    if (people[k].mentionable) pings.add(disc);
+                    if (!peopleMissingMods[disc]) peopleMissingMods[disc] = [];
+                    peopleMissingMods[disc].push(m.def.inventoryDefinition.displayProperties.name);
+                    return people[k].name + `  [<@${disc}>]`;
+                } else {
+                    return people[k].name;
+                }
+            });
+
+            m.def.icon = await modIcons.get(m.def.inventoryDefinition.hash + '.png');
+            mods[m.def.inventoryDefinition.hash] = m.def;
+
+            console.log({ [m.def.inventoryDefinition.hash]: users });
+            return (await modToEmbed(m.def))
+                .addFields({
+                    name: 'Missing',
+                    value: users.sort((a, b) => a.localeCompare(b)).join('\n') || 'Nobody :)',
+                    inline: false
+                })
+        }))
     ];
     guildInfo.channel.send({
         embeds
-    }).then(() => {
-        if (pings.size) {
-            guildInfo.channel.send({
-                content: [...pings]
-                    .sort((a, b) => a.localeCompare(b))
-                    .map(p => `<@${p}>`)
-                    .join(', ')
-            });
-        }
     })
+        .then(() => {
+            if (pings.size) {
+                console.log({ pings });
+                guildInfo.channel.send({
+                    content: [...pings]
+                        .sort((a, b) => a.localeCompare(b))
+                        .map(p => `<@${p}>`)
+                        .join(', ')
+                });
+            }
+        })
         .then(() => fs.writeFileSync('./local/mods.json', JSON.stringify(mods, null, 2)))
         .catch(console.error);
 
@@ -205,7 +211,6 @@ function updateMissingCache() {
     fs.writeFileSync('./local/reminders.json', data);
 }
 
-
 /**
  * @param { DefsTriple } def
  * @return EmbedBuilder
@@ -219,7 +224,45 @@ async function modToEmbed(def) {
         .setURL(`https://www.light.gg/db/items/${def.inventoryDefinition.hash}/`)
         .addFields({
             name: def.inventoryDefinition.itemTypeDisplayName,
-            value: def.sandboxDefinition.displayProperties?.description,
+            value: [def.sandboxDefinition.displayProperties?.description,
+                ...def.inventoryDefinition.tooltipNotifications.map(ttn => ttn.displayString),
+                ...adjustments(def.inventoryDefinition.investmentStats),
+                ...costs(def.inventoryDefinition.investmentStats)].join('\n\n'),
             inline: false
         })
-};
+}
+
+/**
+ *
+ * @param { DestinyItemInvestmentStatDefinition[]} investmentStats
+ */
+function costs(investmentStats) {
+    const arr = [];
+    investmentStats.forEach(stat => {
+        const hash = stat.statTypeHash;
+        if (hash === 2399985800) arr.push(`${stat.value} Void Energy`);
+        else if (hash === 3779394102) arr.push(`${stat.value} Arc Energy`);
+        else if (hash === 3344745325) arr.push(`${stat.value} Solar Energy`);
+        else if (hash === 998798867) arr.push(`${stat.value} Stasis Energy`);
+    });
+    return arr;
+}
+
+/**
+ *
+ * @param { DestinyItemInvestmentStatDefinition[]} investmentStats
+ */
+function adjustments(investmentStats) {
+    const arr = [];
+    investmentStats.forEach(stat => {
+        const hash = stat.statTypeHash;
+        const c = stat.isConditionallyActive;
+        if (hash === 2996146975) arr.push(`${stat.value} Mobility${c ? '*' : ''}`);
+        else if (hash === 392767087) arr.push(`${stat.value} Resilience${c ? '*' : ''}`);
+        else if (hash === 1943323491) arr.push(`${stat.value} Recovery${c ? '*' : ''}`);
+        else if (hash === 1735777505) arr.push(`${stat.value} Discipline${c ? '*' : ''}`);
+        else if (hash === 144602215) arr.push(`${stat.value} Intellect${c ? '*' : ''}`);
+        else if (hash === 4244567218) arr.push(`${stat.value} Strength${c ? '*' : ''}`);
+    });
+    return arr;
+}
