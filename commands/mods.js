@@ -1,5 +1,6 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { colorFromEnergy } = require('../bungie-net-api/util')
+const { SlashCommandBuilder } = require('discord.js');
+const { modToEmbed } = require('../events/dailyReset')
+const fs = require('fs');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -8,27 +9,12 @@ module.exports = {
     async execute(interaction) {
         await interaction.deferReply()
         try {
-            const { getAdaCombatModsSaleDefinitons } = await import('../bungie-net-api/vendor.mjs');
-            const mods = (await getAdaCombatModsSaleDefinitons()).map(d => {
-                return {
-                    // TODO abstract this with the reset mods info
-                    name: d.inventoryDefinition.displayProperties?.name,
-                    icon: 'https://bungie.net' + d.inventoryDefinition.displayProperties?.icon,
-                    kind: d.inventoryDefinition.itemTypeDisplayName,
-                    description: [d.inventoryDefinition.displayProperties?.description,
-                        d.inventoryDefinition.tooltipNotifications[0].displayString].join('\n'),
-                    energy: d.inventoryDefinition.plug.energyCost.energyType
-                }
-            });
-            if (!mods.length) return await interaction.editReply(
+            const mods = require('../local/mods.json');
+            if (!Object.keys(mods).length) return await interaction.editReply(
                 'Ada is not currently selling any combat style mods.');
-            const embeds = mods.map(m => {
-                return new EmbedBuilder()
-                    .setTitle(m.name)
-                    .setDescription(m.description)
-                    .setImage(m.icon)
-                    .setColor(colorFromEnergy(m.energy));
-            })
+
+            const embeds = await Promise.all(Object.keys(mods).map(k => modToEmbed(mods[k])));
+            console.log(Object.keys(mods).map(k => mods[k].inventoryDefinition.displayProperties.name));
             await interaction.editReply({ embeds });
         } catch (e) {
             console.error(e);

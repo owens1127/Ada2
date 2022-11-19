@@ -21,14 +21,14 @@ module.exports = {
  * @param client
  */
 function resets(client) {
-    const { time } = require('../next-reset.json');
+    const { time } = require('../local/next-reset.json');
     const now = Date.now()
     if (now > time) {
         let next = new Date(now);
         const writeOut = () => {
             const data = JSON.stringify({ time: next.getTime() }, null, 2);
             // idk why the path is different, writefile writes from rootDir I guess
-            fs.writeFileSync('./next-reset.json', data);
+            fs.writeFileSync('./local/next-reset.json', data);
         }
         const resetListener = new EventEmitter();
         client.emit('dailyReset', client, resetListener);
@@ -66,7 +66,7 @@ function resets(client) {
 }
 
 function reminders(client) {
-    const { validTil, missing } = require('../reminders.json');
+    const { validTil, missing } = require('../local/reminders.json');
     const today = new Date();
     const delta = ((today.getUTCHours() - config.UTCResetHour) + 24) % 24
         + today.getUTCMinutes() / 60

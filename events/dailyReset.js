@@ -4,20 +4,17 @@ const fetch = require('node-fetch-commonjs');
 const { EmbedBuilder } = require('discord.js');
 const { bungieMembersToMentionable } = require('../database/users.js');
 const { getInfoByGuilds } = require('../database/guilds.js');
-const { colorFromEnergy, modEnergyType } = require('../bungie-net-api/util')
-const { nextReset } = require('../misc/util.js');
-const config = require('../config.json')
+const { modEnergyType, colorFromEnergy } = require('../bungie-net-api/util')
+const { nextReset, asyncMapToObject } = require('../misc/util.js');
+const config = require('../config.json');
 
 /** @type {{[person: string]: string[]}} */
 const peopleMissingMods = {}
-
-/**
- *
- * @type {Map<string, Promise<string>>}
- */
-const modIcons = new Map();
+/** @type {Map<string, Promise<string>>}*/
+ const modIcons = new Map();
 
 module.exports = {
+    modToEmbed,
     name: 'dailyReset',
     on: true,
     async execute(client, resetListener) {
@@ -31,10 +28,9 @@ module.exports = {
                 storeImage(sale.inventoryDefinition, client)
                 return sale.collectibleDefinition.hash
             });
-            await Promise.all(guilds.map(g => {
-                return sendResetInfo(g, client, modHashes, adaSales).then(() => {
-                    console.log(`Sent info to ${g.guild.name} for clan ${g.clan.name}`)
-                })
+            await Promise.all(guilds.map(async g => {
+                await sendResetInfo(g, client, modHashes, adaSales);
+                console.log(`Sent info to ${g.guild.name} for clan ${g.clan.name}`);
             }))
                 .then(updateMissingCache)
                 .then(() => resetListener.emit('success'));
@@ -87,37 +83,30 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
     await bungieMembersToMentionable(people);
     /** @type Set<string> */
     const pings = new Set();
+    /** @type {{[p: string]: DefsTriple}} */
+    const mods = {}
     const embeds = [headerEmbed(guildInfo.clan),
-        ...await Promise.all(modsInfo.map(async m => {
-            const users = Object.keys(people).filter(k => m.missing.includes(k)).map(k => {
-                const disc = people[k].discord;
-                if (disc) {
-                    if (people[k].mentionable) pings.add(disc);
-                    if (!peopleMissingMods[disc]) peopleMissingMods[disc] = [];
-                    peopleMissingMods[disc].push(m.def.inventoryDefinition.displayProperties.name);
-                    return people[k].name + `  [<@${disc}>]`;
-                } else {
-                    return people[k].name;
-                }
-            });
-            console.log({ missing: users })
-
-            return new EmbedBuilder()
-                .setTitle(m.def.inventoryDefinition.displayProperties.name)
-                .setThumbnail(await modIcons.get(m.def.inventoryDefinition.hash + '.png'))
-                .setColor(colorFromEnergy(m.def.inventoryDefinition.plug.energyCost.energyType))
-                .setTimestamp(Date.now())
-                .setURL(`https://www.light.gg/db/items/${m.def.inventoryDefinition.hash}/`)
-                .addFields({
-                    name: m.def.inventoryDefinition.itemTypeDisplayName,
-                    value: m.def.sandboxDefinition.displayProperties?.description,
-                    inline: false
-                }, {
-                    name: 'Missing',
-                    value: users.sort((a, b) => a.localeCompare(b)).join('\n') || 'Nobody :)',
-                    inline: false
-                })
-        }))
+    ...await Promise.all(modsInfo.map(async m => {
+        const users = Object.keys(people).filter(k => m.missing.includes(k)).map(k => {
+            const disc = people[k].discord;
+            if (disc) {
+                if (people[k].mentionable) pings.add(disc);
+                if (!peopleMissingMods[disc]) peopleMissingMods[disc] = [];
+                peopleMissingMods[disc].push(m.def.inventoryDefinition.displayProperties.name);
+                return people[k].name + `  [<@${disc}>]`;
+            } else {
+                return people[k].name;
+            }
+        });
+        m.def.icon = await modIcons.get(m.def.inventoryDefinition.hash + '.png');
+        mods[m.def.inventoryDefinition.hash] = m.def;
+        return (await modToEmbed(m.def))
+            .addFields({
+                name: 'Missing',
+                value: users.sort((a, b) => a.localeCompare(b)).join('\n') || 'Nobody :)',
+                inline: false
+            })
+    }))
     ];
     guildInfo.channel.send({
         embeds
@@ -125,12 +114,15 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
         if (pings.size) {
             guildInfo.channel.send({
                 content: [...pings]
-                    .sort((a,b) => a.localeCompare(b))
+                    .sort((a, b) => a.localeCompare(b))
                     .map(p => `<@${p}>`)
                     .join(', ')
             });
         }
-    }).catch(console.error);
+    })
+        .then(() => fs.writeFileSync('./local/mods.json', JSON.stringify(mods, null, 2)))
+        .catch(console.error);
+
 }
 
 /**
@@ -185,11 +177,11 @@ async function storeImage(def, client) {
     modIcons.set(name, fetch(iconUrl)
         .then(res => res.buffer())
         .then(buff => sharp(buff)
-                .composite([{
-                    input: '.' + overlayUrl
-                }])
-                .png()
-                .toBuffer())
+            .composite([{
+                input: '.' + overlayUrl
+            }])
+            .png()
+            .toBuffer())
         .then(img => client.channels.fetch(config.images)
             .then(channel => channel.send({
                 files: [{
@@ -210,5 +202,24 @@ function updateMissingCache() {
             missing: peopleMissingMods
         }, null,
         2);
-    fs.writeFileSync('./reminders.json', data);
+    fs.writeFileSync('./local/reminders.json', data);
 }
+
+
+/**
+ * @param { DefsTriple } def
+ * @return EmbedBuilder
+ */
+async function modToEmbed(def) {
+    return new EmbedBuilder()
+        .setTitle(def.inventoryDefinition.displayProperties.name)
+        .setThumbnail(def.icon)
+        .setColor(colorFromEnergy(def.inventoryDefinition.plug.energyCost.energyType))
+        .setTimestamp(Date.now())
+        .setURL(`https://www.light.gg/db/items/${def.inventoryDefinition.hash}/`)
+        .addFields({
+            name: def.inventoryDefinition.itemTypeDisplayName,
+            value: def.sandboxDefinition.displayProperties?.description,
+            inline: false
+        })
+};

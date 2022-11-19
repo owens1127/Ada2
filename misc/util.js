@@ -6,9 +6,9 @@ const fs = require('node:fs');
  * @param {Map} map
  * @return {{}}
  */
-exports.mapToObject = (map) => {
-    return Array.from(map).reduce((obj, [key, value]) => {
-        obj[key] = value;
+exports.asyncMapToObject = async (map) => {
+    return Array.from(map).reduce(async (obj, [key, value]) => {
+        obj[key] = await value;
         return obj;
     }, {});
 }

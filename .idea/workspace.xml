@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="41d2deed-006a-4d0b-b38f-1cc2eb1a763e" name="Changes" comment="added more command features">
+    <list default="true" id="41d2deed-006a-4d0b-b38f-1cc2eb1a763e" name="Changes" comment="adding in reminders">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/clan.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/clan.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/events/dailyReset.js" beforeDir="false" afterPath="$PROJECT_DIR$/events/dailyReset.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/reminders.json" beforeDir="false" afterPath="$PROJECT_DIR$/reminders.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,20 +54,25 @@
       <recent name="$PROJECT_DIR$/commands" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Programming\Projects\Discord Bots\Ada2" />
       <recent name="$PROJECT_DIR$/" />
     </key>
   </component>
-  <component name="RunManager" selected="npm.test-bot">
-    <configuration name="test-bot" type="BatchConfigurationType" factoryName="Batch" temporary="true">
-      <module name="Ada-2" />
+  <component name="RunManager" selected="Shell Script.test-bot.sh">
+    <configuration name="deploy-commands.sh" type="ShConfigurationType" temporary="true">
+      <option name="SCRIPT_TEXT" value="" />
+      <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
+      <option name="SCRIPT_PATH" value="$PROJECT_DIR$/dev/deploy-commands.sh" />
+      <option name="SCRIPT_OPTIONS" value="" />
+      <option name="INDEPENDENT_SCRIPT_WORKING_DIRECTORY" value="true" />
+      <option name="SCRIPT_WORKING_DIRECTORY" value="$PROJECT_DIR$/dev" />
+      <option name="INDEPENDENT_INTERPRETER_PATH" value="true" />
+      <option name="INTERPRETER_PATH" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="WORKING_DIRECTORY" value="C:\Programming\Projects\Discord Bots\Ada2\dev" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SCRIPT_NAME" value="test-bot.bat" />
-      <option name="PARAMETERS" value="" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
+      <option name="EXECUTE_IN_TERMINAL" value="true" />
+      <option name="EXECUTE_SCRIPT_FILE" value="true" />
+      <envs />
+      <method v="2" />
     </configuration>
     <configuration name="test-bot.sh" type="ShConfigurationType" temporary="true">
       <option name="SCRIPT_TEXT" value="" />
@@ -118,10 +121,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Shell Script.test-bot.sh" />
+        <item itemvalue="Shell Script.deploy-commands.sh" />
         <item itemvalue="npm.test-bot" />
         <item itemvalue="npm.test-bot-deploy-commands" />
         <item itemvalue="npm.reload-commands" />
-        <item itemvalue="Shell Script.test-bot.sh" />
       </list>
     </recent_temporary>
   </component>

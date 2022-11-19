@@ -15,7 +15,7 @@ async function getAdaSaleHashes() {
         membershipType: BungieMembershipType.TigerSteam,
         vendorHash: config.ada1Hash,
         components: [DestinyComponentType.VendorSales,
-            DestinyComponentType.ItemPerks, DestinyComponentType.ItemStats]
+        DestinyComponentType.ItemPerks, DestinyComponentType.ItemStats]
     }).then(({ Response }) => {
         return Object.keys(Response.sales.data).map(id => {
             return Response.sales.data[id].itemHash;
@@ -24,10 +24,15 @@ async function getAdaSaleHashes() {
 }
 
 /**
+ * @typedef DefsTriple
+ * @property {DestinyInventoryItemDefinition} inventoryDefinition
+ * @property {DestinyCollectibleDefinition} collectibleDefinition
+ * @property {DestinySandboxPerkDefinition} sandboxDefinition
+ */
+
+/**
  * Returns the definitions for all Ada's sales
- * @return {Promise<{inventoryDefinition: DestinyInventoryItemDefinition,
- *          collectibleDefinition: DestinyCollectibleDefinition,
- *          sandboxDefinition: DestinySandboxPerkDefinition}[]>}
+ * @return {Promise<DefsTriple[]>}
  */
 export async function getAdaCombatModsSaleDefinitons(force) {
     const hashes = await getAdaSaleHashes();
