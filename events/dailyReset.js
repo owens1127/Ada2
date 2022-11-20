@@ -31,10 +31,16 @@ module.exports = {
             });
             const failures = [];
             await Promise.all(guilds.map(g => {
-                if (!g.channel || !g.clan || !g.members || !g.guild) {
+                if (!g.channel || !g.guild) {
+                    // no channel or guild
                     return failures.push(g);
+                } else if (!g.clan || !g.members) {
+                     // no linked clan
+                    return sendStaticResetInfo(g, client, modHashes, adaSales).then(() => {
+                        console.log(`Sent static info to ${g.guild.name}`);
+                    });
                 }
-                return sendResetInfo(g, client, modHashes, adaSales).then(() => {
+                else return sendResetInfo(g, client, modHashes, adaSales).then(() => {
                     console.log(`Sent info to ${g.guild.name} for clan ${g.clan.name}`);
                 });
             }))
@@ -65,7 +71,7 @@ module.exports = {
 async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
     // sometimes ada is a prick (often)
     if (!modHashes.length) {
-        guildInfo.channel.send({ embeds: [headerEmbed(guildInfo.clan.name).setDescription(':(')] });
+        guildInfo.channel.send({ embeds: [headerEmbed(guildInfo.clan).setDescription(':(')] });
         return;
     }
     const statuses = await membersModStatuses(modHashes, guildInfo.members.map(m => {
@@ -118,12 +124,12 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
             mods[mod.def.inventoryDefinition.hash] = mod.def;
 
             console.log({ [mod.def.inventoryDefinition.hash]: users });
-            return (await modToEmbed(mod.def))
+            return modToEmbed(mod.def).then(embed => embed
                 .addFields({
                     name: 'Missing',
                     value: users.sort((a, b) => a.localeCompare(b)).join('\n') || 'Nobody :)',
                     inline: false
-                })
+                }))
         }))
     ];
     return guildInfo.channel.send({
@@ -142,6 +148,30 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
         })
         .then(() => fs.writeFileSync('./local/mods.json', JSON.stringify(mods, null, 2)))
         .catch(console.error);
+
+}
+async function sendStaticResetInfo(guildInfo, client, modHashes, modDefs) {
+    // sometimes ada is a prick (often)
+    if (!modHashes.length) {
+        guildInfo.channel.send({ embeds: [staticHeaderEmbed().setDescription(':(')] });
+        return;
+    }
+    const modsInfo = modHashes.map(hash => {
+        return modDefs.find(def => def.collectibleDefinition.hash === hash);
+    });
+
+    const mods = {}
+    const embeds = [staticHeaderEmbed(guildInfo.clan),
+        ...await Promise.all(modsInfo.map(async def => {
+            def.icon = await modIcons.get(def.inventoryDefinition.hash + '.png');
+            mods[def.inventoryDefinition.hash] = def;
+            return modToEmbed(def);
+        }))
+    ];
+    return guildInfo.channel.send({
+        embeds
+    })
+    .catch(console.error);
 
 }
 
@@ -174,6 +204,34 @@ function headerEmbed(clan) {
                 + 'from previous seasons that are not otherwise acquirable.',
             inline: false
         }, {
+            name: 'Never miss a mod!',
+            value: 'Want to be pinged? `/register` with your Bungie Name and do `/mentions true` to never miss out when Ada is selling a mod you are missing! Further, you can do `/remindme` to set a time for the bot to DM you when you are missing a mod.',
+            inline: false
+        })
+    // TODO Destiny2.GetClanBannerSource for the banner
+    // clan.clanInfo.clanBannerData
+}
+
+/**
+ * @param clan
+ * @return {EmbedBuilder}
+ */
+ function staticHeaderEmbed() {
+    return new EmbedBuilder()
+        .setTitle('Ada 1 Mods Today')
+        .addFields({
+            name: 'Combat-Style Mods',
+            value: 'Missing a mod? Head to Ada-1 in the tower and go purchase it! '
+                + 'Every day Ada has a small chance to sell powerful combat-style mods '
+                + 'from previous seasons that are not otherwise acquirable.',
+            inline: false
+        },
+        {
+            name: 'Register your clan!',
+            value: 'List everyone in your clan who is missing the mod by linking your `/clan` (requires Manage Server permissions)',
+            inline: false
+        },
+        {
             name: 'Never miss a mod!',
             value: 'Want to be pinged? `/register` with your Bungie Name and do `/mentions true` to never miss out when Ada is selling a mod you are missing! Further, you can do `/remindme` to set a time for the bot to DM you when you are missing a mod.',
             inline: false

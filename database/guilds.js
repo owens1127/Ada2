@@ -41,6 +41,20 @@ exports.linkGuild = async (guildId, clanId) => {
 }
 
 /**
+ * Updates the clan id for a guild
+ * @param {string} guildId
+ * @param {string} clanId
+ * @return {Promise<string>} the new clan name
+ */
+ exports.unlinkGuild = async (guildId) => {
+    // get the clan info from bungie api
+    const query = `INSERT INTO ${config.guildTable} (guild_id, clan_id)
+                   VALUES (${escape(guildId)}, NULL) ON DUPLICATE KEY
+                   UPDATE clan_id = NULL;`
+    return await dbQuery(query);
+}
+
+/**
  * All built-out info for a guild
  * @typedef GuildInfoObject
  * @property {Guild} guild
@@ -61,7 +75,7 @@ exports.getInfoByGuilds = async (client) => {
         console.log(data);
         /** @type {GuildInfoObject[]} */
         return Promise.all(
-            data.filter(rdp => !!rdp.clan_id && !!rdp.broadcast_channel).map(rdp => membersPromise(rdp, client).catch((e) => {
+            data.map(rdp => membersPromise(rdp, client).catch((e) => {
                 console.error(`Error for guild ${rdp.guild_id}: ${e}`)
                 return {};
             })));
@@ -79,15 +93,19 @@ async function membersPromise(rdp, client) {
         let page = 1;
         let results = [];
         do {
-            members = await import('../bungie-net-api/clan.mjs').then(({getMembersOfClan}) => getMembersOfClan(rdp.clan_id, page));
-            results.push(...members.results);
-            page++;
+            await import('../bungie-net-api/clan.mjs').then(({getMembersOfClan}) => getMembersOfClan(rdp.clan_id, page)
+            .then(srogm => {
+                members = srogm;
+                results.push(...members.results);
+                page++;
+            })
+            .catch(() => results = null));
         }
-        while (members.hasMore);
+        while (members?.hasMore);
 
         const [clan, guild, channel] = await Promise.all([
             // TODO more detailed error handling instead of just nulling
-            import('../bungie-net-api/clan.mjs').then(({getClan}) => getClan(rdp.clan_id).catch(() => null)),
+            import('../bungie-net-api/clan.mjs').then(({getClan}) => getClan(rdp.clan_id)).catch(() => null),
             client.guilds.fetch(rdp.guild_id).catch(() => null),
             client.channels.fetch(rdp.broadcast_channel).catch(() => null)]);
         return { clan, guild, channel, members: results };
