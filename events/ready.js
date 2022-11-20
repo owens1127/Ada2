@@ -33,7 +33,7 @@ function resets(client) {
         const resetListener = new EventEmitter();
         client.emit('dailyReset', client, resetListener);
         resetListener.once('success', () => {
-            console.log('Reset Tasks Complete')
+            console.log('Reset Tasks Complete ඞ')
             // No matter when in the day the reset happens, the next call will happen the next day
             next.setUTCHours(next.getUTCHours() - config.UTCResetHour);
             next.setUTCDate(next.getUTCDate() + 1);
