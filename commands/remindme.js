@@ -20,10 +20,10 @@ module.exports = {
                 .setName('disable')
                 .setDescription('Disable reminders from the bot')),
     async execute(interaction) {
+        await interaction.deferReply();
         if (interaction.options.getSubcommand() === 'time') {
             /** @type number */
             const delta = interaction.options.getNumber('delta');
-            await interaction.deferReply();
             try {
                 const str = await remindString(interaction.user.id, delta)
                 await interaction.editReply({ content: `Updated reminder time to \`${str}\`.` })
@@ -31,7 +31,6 @@ module.exports = {
                 await interaction.editReply({ content: `Failed to update reminder time: \`${e.message}\``})
             }
         } else if (interaction.options.getSubcommand() === 'disable') {
-            interaction.deferReply();
             try {
                 await disableReminders(interaction.user.id)
                 await interaction.editReply(
