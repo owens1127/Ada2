@@ -55,5 +55,5 @@ async function remindString(id, delta) {
     if (delta <= -24 || delta >= 24) {
         throw new Error('Please enter a valid number between -23.99 and 23.99');
     }
-    return await updateReminderTime(id, delta);
+    return updateReminderTime(id, delta);
 }

@@ -57,7 +57,7 @@ exports.disableReminders = async (userId) => {
     const query = `UPDATE ${config.userTable}
                    SET remind_time = NULL
                    WHERE discord_id = ${escape(userId)};`
-    await dbQuery(query);
+    dbQuery(query);
 }
 
 /**
@@ -68,8 +68,8 @@ exports.disableReminders = async (userId) => {
  * @return {Promise<string>}
  */
 exports.linkAccounts = async (bungieName, userId, mentionable) => {
-    const { findMemberDetails } = await import('../bungie-net-api/profile.mjs');
-    const member = await findMemberDetails(bungieName);
+    const member = await import('../bungie-net-api/profile.mjs')
+    .then(({findMemberDetails}) => findMemberDetails(bungieName));
     const query = `INSERT INTO ${config.userTable} (discord_id, destiny_membership_id,
                                                     destiny_membership_type, mentionable)
                    VALUES (${escape(userId)}, ${escape(member.membershipId)},
@@ -89,7 +89,7 @@ exports.bungieMembersToMentionable = async (members) => {
     const query = `SELECT destiny_membership_id, discord_id, mentionable, remind_time
                    FROM ${config.userTable}
                    WHERE destiny_membership_id IN (${escape(Object.keys(members))});`
-    await dbQuery(query)
+    return dbQuery(query)
         .then(data => {
             console.log(data);
             data.forEach(/** @type UsersResponse */rdp => {

@@ -20,8 +20,8 @@ module.exports = {
     async execute(client, resetListener) {
         console.log(`Daily reset for ${new Date().toDateString()}`);
         try {
-            const adaSales = (await (await import('../bungie-net-api/vendor.mjs')).getAdaCombatModsSaleDefinitons(
-                true))
+            const adaSales = await import('../bungie-net-api/vendor.mjs')
+                .then(({getAdaCombatModsSaleDefinitons}) => getAdaCombatModsSaleDefinitons(true))
             console.log('Ada is selling...')
             console.log(adaSales)
             const guilds = await getInfoByGuilds(client);
@@ -29,10 +29,21 @@ module.exports = {
                 storeImage(sale.inventoryDefinition, client)
                 return sale.collectibleDefinition.hash
             });
-            await Promise.all(guilds.map(async g => {
-                await sendResetInfo(g, client, modHashes, adaSales);
-                console.log(`Sent info to ${g.guild.name} for clan ${g.clan.name}`);
+            const failures = [];
+            await Promise.all(guilds.map(g => {
+                if (!g.channel || !g.clan || !g.members || !g.guild) {
+                    return failures.push(g);
+                }
+                return sendResetInfo(g, client, modHashes, adaSales).then(() => {
+                    console.log(`Sent info to ${g.guild.name} for clan ${g.clan.name}`);
+                });
             }))
+                .then(() => { 
+                    if (failures.length) {
+                        console.error(`Failed to send reset info to ${failures.length} servers.`);
+                        console.log(failures);
+                    }
+                })
                 .then(updateMissingCache)
                 .then(() => resetListener.emit('success'));
         } catch (e) {
@@ -112,7 +123,7 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
                 })
         }))
     ];
-    guildInfo.channel.send({
+    return guildInfo.channel.send({
         embeds
     })
         .then(() => {
@@ -138,9 +149,9 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
  *     DestinyCollectibleState}}>}
  */
 async function membersModStatuses(hashes, member) {
-    return await Promise.all(member.map(async m => {
-        return (await import('../bungie-net-api/profile.mjs')).missingMods(hashes, m.membershipId,
-            m.membershipType);
+    return Promise.all(member.map(m => {
+        return import('../bungie-net-api/profile.mjs')
+        .then(({missingMods}) => missingMods(hashes, m.membershipId, m.membershipType));
     })).then(arr => {
         return Object.assign({}, ...arr.map((e) => ({ [e.membershipId]: e.data })));
     });

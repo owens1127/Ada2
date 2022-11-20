@@ -29,7 +29,7 @@ async function destinyManifest(force) {
 export async function getDestinyInventoryItemDefinitions(force) {
     cache.DestinyInventoryItemDefinition =
         cache.DestinyInventoryItemDefinition && !force ? cache.DestinyInventoryItemDefinition
-            : await Manifest.getDestinyManifestComponent({
+            : Manifest.getDestinyManifestComponent({
                 destinyManifest: await destinyManifest(force),
                 tableName: Manifest.Components.DestinyInventoryItemDefinition,
                 language: 'en'

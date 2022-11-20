@@ -35,20 +35,22 @@ async function getAdaSaleHashes() {
  * @return {Promise<DefsTriple[]>}
  */
 export async function getAdaCombatModsSaleDefinitons(force) {
-    const hashes = await getAdaSaleHashes();
-    const inventoryItemDefinition = await getDestinyInventoryItemDefinitions(force);
+    const [hashes, inventoryItemDefinition] = await Promise.all([
+        getAdaSaleHashes(), 
+        getDestinyInventoryItemDefinitions(force)]);
     return await Promise.all(hashes.map(h => {
         return inventoryItemDefinition[h];
     }).filter(d => {
         return d.uiItemDisplayStyle === 'ui_display_style_energy_mod'
             && d.plug?.plugCategoryIdentifier.includes('enhancements.season_');
     }).map(async inventoryDefinition => {
+        const [collectibleDefinition, sandboxDefinition] = await Promise.all([
+            getDefinition(Components.DestinyCollectibleDefinition, inventoryDefinition.collectibleHash),
+            getDefinition(Components.DestinySandboxPerkDefinition, inventoryDefinition.perks[0].perkHash)]);
         return {
             inventoryDefinition,
-            collectibleDefinition: await getDefinition(Components.DestinyCollectibleDefinition,
-                inventoryDefinition.collectibleHash),
-            sandboxDefinition: await getDefinition(Components.DestinySandboxPerkDefinition,
-                inventoryDefinition.perks[0].perkHash)
+            collectibleDefinition,
+            sandboxDefinition
         }
     }));
 }
