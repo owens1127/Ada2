@@ -1,5 +1,6 @@
 const {SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const {linkGuild} = require('../database/guilds');
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('clan')
@@ -12,11 +13,10 @@ module.exports = {
                 .setRequired(true)),
     async execute(interaction) {
         await interaction.deferReply()
-        /** @type string */
         const groupId = groupIdFromLink(interaction.options.getString('url'));
         if (!groupId) {
             await interaction.editReply(
-                {content: 'Invalid clan URL. Should match the form <https://www.bungie.net/en/ClanV2?groupid=0000000>'});
+                {content: 'Invalid clan URL. Should match the form <https://www.bungie.net/en/ClanV2?groupId=0000000>'});
             return;
         }
 
@@ -30,10 +30,14 @@ module.exports = {
     }
 };
 
+/**
+ * @param {string} link 
+ * @returns {string | undefined | null}
+ */
 function groupIdFromLink(link) {
     try {
         const params = new URL(link).searchParams
-        return params.get('groupid') || params.get('groupId');
+        return params.get('groupId') || params.get('groupid');
     } catch (e) {
         return null;
     }

@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { linkAccounts } = require('../database/users');
 const { remindString } = require('../commands/remindme.js');
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('register')

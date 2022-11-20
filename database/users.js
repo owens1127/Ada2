@@ -1,5 +1,6 @@
 const config = require('../config.json');
 const { dbQuery, escape } = require('./util');
+const { round } = require('../misc/util');
 
 /**
  * @typedef UsersResponse
@@ -11,9 +12,9 @@ const { dbQuery, escape } = require('./util');
  */
 
 /**
- *
- * @param userId
- * @param foo
+ * Toggles the mentionable field to foo for the user
+ * @param {string} userId
+ * @param {boolean} foo
  * @return {Promise<boolean>}
  */
 exports.toggleMentionable = async (userId, foo) => {
@@ -26,9 +27,9 @@ exports.toggleMentionable = async (userId, foo) => {
 }
 
 /**
- *
- * @param userId
- * @param delta
+ * Updates the reminder time for a user
+ * @param {string} userId
+ * @param {number} delta
  * @return {Promise<string>}
  */
 exports.updateReminderTime = async (userId, delta) => {
@@ -49,8 +50,8 @@ exports.updateReminderTime = async (userId, delta) => {
 }
 
 /**
- *
- * @param userId
+ * Removes a reminder time for a user
+ * @param {string} userId
  */
 exports.disableReminders = async (userId) => {
     if (!await inDb(userId)) throw new Error('You be registered to disable reminders');
@@ -61,10 +62,10 @@ exports.disableReminders = async (userId) => {
 }
 
 /**
- *
- * @param bungieName
- * @param userId
- * @param mentionable
+ * Tethers a discord account to a bungie account
+ * @param {string} bungieName
+ * @param {string} userId
+ * @param {boolean} mentionable
  * @return {Promise<string>}
  */
 exports.linkAccounts = async (bungieName, userId, mentionable) => {
@@ -83,6 +84,7 @@ exports.linkAccounts = async (bungieName, userId, mentionable) => {
 
 /**
  * Mutates the members dictionary and the pings array
+ * @param {{[membership_id: string]}} members
  * @return {Promise<void>}
  */
 exports.bungieMembersToMentionable = async (members) => {
@@ -104,8 +106,8 @@ exports.bungieMembersToMentionable = async (members) => {
 }
 
 /**
- *
- * @param {{hours, minutes}}delta
+ * Gets a list of members with a remind time this minute
+ * @param {number} delta
  * @return {Promise<string[]>}
  */
 exports.getMembersPerDelta = async (delta) => {
@@ -120,14 +122,14 @@ exports.getMembersPerDelta = async (delta) => {
         });
 }
 
-function round(n, d) {
-    const tens = Math.pow(10, d);
-    return Math.round(tens * n) / tens;
-}
-
-async function inDb(userId) {
+/**
+ * Is a discord user in the database?
+ * @param {string} discord 
+ * @returns {Promise<boolean>}
+ */
+async function inDb(discord) {
     const query = `SELECT COUNT(1)
                    FROM ${config.userTable}
-                   WHERE discord_id = ${userId};`
+                   WHERE discord_id = ${discord};`
     return !!(await dbQuery(query))[0]['COUNT(1)'];
 }

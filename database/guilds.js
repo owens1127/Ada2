@@ -8,9 +8,9 @@ const config = require('../config.json')
  * @property {string} clan_id}
  */
 /**
- *
- * @param guildId
- * @param channel
+ * Updates the broadcast channel for a guild
+ * @param {string} guildId
+ * @param {TextChannel} channel
  * @return {Promise<TextChannel>}
  */
 exports.updateBroadcastChannel = async (guildId, channel) => {
@@ -23,9 +23,9 @@ exports.updateBroadcastChannel = async (guildId, channel) => {
 }
 
 /**
- *
- * @param guildId
- * @param clanId
+ * Updates the clan id for a guild
+ * @param {string} guildId
+ * @param {string} clanId
  * @return {Promise<string>} the new clan name
  */
 exports.linkGuild = async (guildId, clanId) => {
@@ -41,6 +41,7 @@ exports.linkGuild = async (guildId, clanId) => {
 }
 
 /**
+ * All built-out info for a guild
  * @typedef GuildInfoObject
  * @property {Guild} guild
  * @property {GroupV2} clan
@@ -49,6 +50,7 @@ exports.linkGuild = async (guildId, clanId) => {
  */
 
 /**
+ * @param client
  * @return {Promise<GuildInfoObject[]>}
  */
 exports.getInfoByGuilds = async (client) => {
@@ -68,7 +70,7 @@ exports.getInfoByGuilds = async (client) => {
 
 /**
  *
- * @param rdp
+ * @param {GuildResponse} rdp - RowDataPacket
  * @param client
  * @return {Promise<GuildInfoObject>}
  */
@@ -84,6 +86,7 @@ async function membersPromise(rdp, client) {
         while (members.hasMore);
 
         const [clan, guild, channel] = await Promise.all([
+            // TODO more detailed error handling instead of just nulling
             import('../bungie-net-api/clan.mjs').then(({getClan}) => getClan(rdp.clan_id).catch(() => null)),
             client.guilds.fetch(rdp.guild_id).catch(() => null),
             client.channels.fetch(rdp.broadcast_channel).catch(() => null)]);

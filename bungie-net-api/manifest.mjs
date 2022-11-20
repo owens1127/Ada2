@@ -3,6 +3,10 @@ import { client } from './main.mjs';
 
 const cache = {}
 
+/**
+ * Clears the cache
+ * @return void
+ */
 function clearManifestCache() {
     console.log('Manifest cache cleared')
     for (let prop in cache){
@@ -12,18 +16,24 @@ function clearManifestCache() {
     }
 }
 
+/**
+ * Get the destiny manifest from cache or fetch it
+ * @param {boolean} force force a fetch
+ * @returns 
+ */
 async function destinyManifest(force) {
     console.log('Fetching Destiny 2 Manifest');
     cache.manifest =
-        cache.manifest && !force ? cache.manifest : await (async () => {
-            setTimeout(clearManifestCache,60 * 60000);
+        cache.manifest && !force ? cache.manifest : await (() => {
+            setTimeout(clearManifestCache, 60 * 60000);
             return client.Destiny2.GetDestinyManifest().then(r => r.Response);
         })();
     return cache.manifest;
 }
 
 /**
- * Gets the DestinyInventoryItemDefinition in english
+ * Gets the DestinyInventoryItemDefinitions in english
+ * @param {boolean} force force a fetch
  * @return {Promise<{[p: number]: DestinyInventoryItemDefinition}>}
  */
 export async function getDestinyInventoryItemDefinitions(force) {
@@ -38,10 +48,11 @@ export async function getDestinyInventoryItemDefinitions(force) {
 }
 
 /**
- *
- * @param {string} definition
+ * Get a manifest definition for a specifc hash
+ * @template T
+ * @param {T} definition
  * @param {number | string} hash
- * @return {Promise<DestinyDefinition>}
+ * @return {Promise<DestinyDefinitionFrom<T>>}
  */
 export async function getDefinition(definition, hash) {
     return client.Destiny2.GetDestinyEntityDefinition({

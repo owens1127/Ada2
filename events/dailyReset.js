@@ -4,8 +4,8 @@ const fetch = require('node-fetch-commonjs');
 const { EmbedBuilder } = require('discord.js');
 const { bungieMembersToMentionable } = require('../database/users.js');
 const { getInfoByGuilds } = require('../database/guilds.js');
-const { modEnergyType, colorFromEnergy } = require('../bungie-net-api/util')
-const { nextReset, asyncMapToObject } = require('../misc/util.js');
+const { modEnergyType, colorFromEnergy, adjustments, costs } = require('../bungie-net-api/util')
+const { nextReset } = require('../misc/util.js');
 const config = require('../config.json');
 
 /** @type {{[person: string]: string[]}} */
@@ -244,39 +244,4 @@ async function modToEmbed(def) {
                 ...costs(def.inventoryDefinition.investmentStats)].join('\n\n'),
             inline: false
         })
-}
-
-/**
- *
- * @param { DestinyItemInvestmentStatDefinition[]} investmentStats
- */
-function costs(investmentStats) {
-    const arr = [];
-    investmentStats.forEach(stat => {
-        const hash = stat.statTypeHash;
-        if (hash === 2399985800) arr.push(`${stat.value} Void Energy`);
-        else if (hash === 3779394102) arr.push(`${stat.value} Arc Energy`);
-        else if (hash === 3344745325) arr.push(`${stat.value} Solar Energy`);
-        else if (hash === 998798867) arr.push(`${stat.value} Stasis Energy`);
-    });
-    return arr;
-}
-
-/**
- *
- * @param { DestinyItemInvestmentStatDefinition[]} investmentStats
- */
-function adjustments(investmentStats) {
-    const arr = [];
-    investmentStats.forEach(stat => {
-        const hash = stat.statTypeHash;
-        const c = stat.isConditionallyActive;
-        if (hash === 2996146975) arr.push(`${stat.value} Mobility${c ? '*' : ''}`);
-        else if (hash === 392767087) arr.push(`${stat.value} Resilience${c ? '*' : ''}`);
-        else if (hash === 1943323491) arr.push(`${stat.value} Recovery${c ? '*' : ''}`);
-        else if (hash === 1735777505) arr.push(`${stat.value} Discipline${c ? '*' : ''}`);
-        else if (hash === 144602215) arr.push(`${stat.value} Intellect${c ? '*' : ''}`);
-        else if (hash === 4244567218) arr.push(`${stat.value} Strength${c ? '*' : ''}`);
-    });
-    return arr;
 }
