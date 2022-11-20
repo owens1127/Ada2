@@ -1,12 +1,63 @@
 'use strict';
-const { Client, GatewayIntentBits, Collection } = require('discord.js');
+const { Client, GatewayIntentBits, Collection, Options } = require('discord.js');
 const fs = require('node:fs');
 const path = require('path');
 
 const token = process.env.DISCORD_TOKEN
 
+const basicSweeper = {
+    interval: 900, // 15 minutes
+    filter: () => {
+        return () => true // remove all from cache
+    } 
+}
 // Create a new main instance
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({ 
+    intents: [GatewayIntentBits.Guilds],
+    makeCache: Options.cacheWithLimits({
+		...Options.DefaultMakeCacheSettings,
+        // https://github.com/discordjs/discord.js/tree/main/packages/discord.js/src/managers
+		ReactionManager: 0,
+        VoiceStateManager: 0,
+        PresenceManager: 0,
+        GuildStickerManager: 0,
+        UserManager: {
+            maxSize: 1000,
+			keepOverLimit: user => user.id === client.user.id,
+        },
+		GuildMemberManager: {
+			maxSize: 1000,
+			keepOverLimit: member => member.id === client.user.id,
+		},
+	}),
+    sweepers: {
+        autoModerationRules: basicSweeper,
+        applicationCommands: basicSweeper,
+        bans: basicSweeper,
+        emojis: basicSweeper,
+        invites: basicSweeper,
+        messages: {
+			interval: 1800,
+			lifetime: 3600,	
+		},
+        guildMembers: {
+			interval: 900,
+			filter: () => {
+                const { missing } = JSON.parse(fs.readFileSync('./local/reminders.json'));
+                return (value, key) => !(key in missing) && value.kickable
+            }
+		},
+        presences: basicSweeper,
+        reactions: basicSweeper,
+        stageInstances: basicSweeper,
+        stickers: basicSweeper,
+        threadMembers: basicSweeper,
+		threads: basicSweeper,
+		users: basicSweeper,
+        voiceStates: basicSweeper,
+	},
+
+});
 client.commands = new Collection();
 
 const commandsPath = path.join(__dirname, 'commands');
