@@ -17,16 +17,3 @@ module.exports = {
         }
     }
 };
-
-/**
- * @param {string} link 
- * @returns {string | undefined | null}
- */
-function groupIdFromLink(link) {
-    try {
-        const params = new URL(link).searchParams
-        return params.get('groupId') || params.get('groupid');
-    } catch (e) {
-        return null;
-    }
-}
