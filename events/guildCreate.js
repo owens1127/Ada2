@@ -24,7 +24,6 @@ function sendGreeting(channels, guild) {
         welcome = textChannels.filter(c => !c.nsfw).first();
     }
     welcome.send({
-        content: 'Hi!',
         embeds: [
             new EmbedBuilder()
                 .setTitle('Ada-2 Discord Bot')
