@@ -10,9 +10,6 @@ module.exports = {
                 .setTitle('Commands for Ada-2')
                 .setColor('#ceecf2')
                 .setThumbnail(interaction.client.user.avatarURL() || interaction.client.user.defaultAvatarURL)
-                .setFooter({
-                    
-                })
                 .setTimestamp(Date.now());
             interaction.client.commands.forEach(command => {
                 const usage = command.data.options.map(o => {
