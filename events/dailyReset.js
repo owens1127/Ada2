@@ -99,15 +99,18 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
     const mods = {}
     const embeds = [headerEmbed(guildInfo.clan),
         ...await Promise.all(modsInfo.map(async m => {
-            const users = Object.keys(people).filter(k => m.missing.includes(k)).map(k => {
-                const disc = people[k].discord;
-                if (disc) {
-                    if (people[k].mentionable) pings.add(disc);
-                    if (!peopleMissingMods[disc]) peopleMissingMods[disc] = [];
-                    peopleMissingMods[disc].push(m.def.inventoryDefinition.displayProperties.name);
-                    return people[k].name + `  [<@${disc}>]`;
+            const users = Object.keys(people).filter(kp => m.missing.includes(kp)).map(kp => {
+                // nothing is stopping people from linking multiple discords to the same bungie account
+                const { accounts } = people[kp];
+                accounts?.forEach((acct) => {
+                    if (acct.mentionable) pings.add(acct.discord);
+                    if (!peopleMissingMods[acct.discord]) peopleMissingMods[acct.discord] = [];
+                    peopleMissingMods[acct.discord].push(m.def.inventoryDefinition.displayProperties.name);
+                });
+                if (accounts?.length) {
+                    return people[kp].name + ` [${accounts.map(a => `<@${a.discord}>`).join(', ')}]`;
                 } else {
-                    return people[k].name;
+                    return people[kp].name;
                 }
             });
 
@@ -127,8 +130,9 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
         embeds
     })
         .then(() => {
+        
+            console.log({ pings });
             if (pings.size) {
-                console.log({ pings });
                 guildInfo.channel.send({
                     content: [...pings]
                         .sort((a, b) => a.localeCompare(b))
@@ -172,7 +176,7 @@ function headerEmbed(clan) {
             inline: false
         }, {
             name: 'Never miss a mod!',
-            value: 'Want to be pinged? `/register` with your Bungie Name and do `/mentions true` to never miss out when Ada is selling a mod you are missing!',
+            value: 'Want to be pinged? `/register` with your Bungie Name and do `/mentions true` to never miss out when Ada is selling a mod you are missing! Further, you can do `/remindme` to set a time for the bot to DM you when you are missing a mod.',
             inline: false
         })
     // TODO Destiny2.GetClanBannerSource for the banner

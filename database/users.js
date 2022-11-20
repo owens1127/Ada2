@@ -93,9 +93,12 @@ exports.bungieMembersToMentionable = async (members) => {
         .then(data => {
             console.log(data);
             data.forEach(/** @type UsersResponse */rdp => {
-                members[rdp.destiny_membership_id].discord = rdp.discord_id
-                members[rdp.destiny_membership_id].mentionable = !!rdp.mentionable
-                members[rdp.destiny_membership_id].remind_time = rdp.remind_time
+                members[rdp.destiny_membership_id].accounts = members[rdp.destiny_membership_id].accounts || [];
+                members[rdp.destiny_membership_id].accounts.push({
+                    discord: rdp.discord_id,
+                    mentionable: !!rdp.mentionable,
+                    remind_time: rdp.remind_time
+                });
             })
         });
 }
