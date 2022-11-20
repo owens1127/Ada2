@@ -98,14 +98,14 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
     /** @type {{[p: string]: DefsTriple}} */
     const mods = {}
     const embeds = [headerEmbed(guildInfo.clan),
-        ...await Promise.all(modsInfo.map(async m => {
-            const users = Object.keys(people).filter(kp => m.missing.includes(kp)).map(kp => {
+        ...await Promise.all(modsInfo.map(async mod => {
+            const users = Object.keys(people).filter(kp => mod.missing.includes(kp)).map(kp => {
                 // nothing is stopping people from linking multiple discords to the same bungie account
                 const { accounts } = people[kp];
                 accounts?.forEach((acct) => {
                     if (acct.mentionable) pings.add(acct.discord);
                     if (!peopleMissingMods[acct.discord]) peopleMissingMods[acct.discord] = [];
-                    peopleMissingMods[acct.discord].push(m.def.inventoryDefinition.displayProperties.name);
+                    peopleMissingMods[acct.discord].push(mod.def.inventoryDefinition.displayProperties.name);
                 });
                 if (accounts?.length) {
                     return people[kp].name + ` [${accounts.map(a => `<@${a.discord}>`).join(', ')}]`;
@@ -114,11 +114,11 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
                 }
             });
 
-            m.def.icon = await modIcons.get(m.def.inventoryDefinition.hash + '.png');
-            mods[m.def.inventoryDefinition.hash] = m.def;
+            mod.def.icon = await modIcons.get(mod.def.inventoryDefinition.hash + '.png');
+            mods[mod.def.inventoryDefinition.hash] = mod.def;
 
-            console.log({ [m.def.inventoryDefinition.hash]: users });
-            return (await modToEmbed(m.def))
+            console.log({ [mod.def.inventoryDefinition.hash]: users });
+            return (await modToEmbed(mod.def))
                 .addFields({
                     name: 'Missing',
                     value: users.sort((a, b) => a.localeCompare(b)).join('\n') || 'Nobody :)',
@@ -135,7 +135,6 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
             if (pings.size) {
                 guildInfo.channel.send({
                     content: [...pings]
-                        .sort((a, b) => a.localeCompare(b))
                         .map(p => `<@${p}>`)
                         .join(', ')
                 });
