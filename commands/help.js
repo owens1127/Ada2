@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, PermissionsBitField } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('help')
@@ -11,10 +11,9 @@ module.exports = {
                     if (o.required) return `[${o.name}]`;
                     else return `(${o.name})`;
                 }).join(' ');
-                const permissions = new PermissionsBitField(command.data.default_member_permissions).toArray();
                 embed.addFields({
                     name: `/${command.data.name} ${usage}`,
-                    value: command.data.description + `\n*Required Permissions:* ${permissions.join(' ,') || 'Default'}`
+                    value: command.data.description
                 });
             });
             await interaction.reply({ embeds: [embed], ephemeral: true });

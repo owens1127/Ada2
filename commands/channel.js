@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, ChannelType, TextChannel, PermissionFlagsBits } = require(
     'discord.js');
 const { updateBroadcastChannel } = require('../database/guilds.js');
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('channel')

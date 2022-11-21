@@ -7,7 +7,7 @@ module.exports = {
             `${interaction.user.tag} in ${interaction.guild?.name || 'DMs'} #${interaction.channel?.name} triggered an interaction.`);
 
 
-        const command = interaction.client.commands.get(interaction.commandName);
+        const command = interaction.client.commands.get(interaction.commandName) || interaction.client.devCommands.get(interaction.commandName);
 
         if (!command) return;
         console.log(

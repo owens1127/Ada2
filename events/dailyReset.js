@@ -4,8 +4,8 @@ const fetch = require('node-fetch-commonjs');
 const { EmbedBuilder } = require('discord.js');
 const { bungieMembersToMentionable } = require('../database/users.js');
 const { getInfoByGuilds } = require('../database/guilds.js');
-const { modEnergyType, colorFromEnergy } = require('../bungie-net-api/util')
-const { nextReset, asyncMapToObject } = require('../misc/util.js');
+const { modEnergyType, colorFromEnergy, adjustments, costs } = require('../bungie-net-api/util')
+const { nextReset } = require('../misc/util.js');
 const config = require('../config.json');
 
 /** @type {{[person: string]: string[]}} */
@@ -20,8 +20,8 @@ module.exports = {
     async execute(client, resetListener) {
         console.log(`Daily reset for ${new Date().toDateString()}`);
         try {
-            const adaSales = (await (await import('../bungie-net-api/vendor.mjs')).getAdaCombatModsSaleDefinitons(
-                true))
+            const adaSales = await import('../bungie-net-api/vendor.mjs')
+                .then(({getAdaCombatModsSaleDefinitons}) => getAdaCombatModsSaleDefinitons(true))
             console.log('Ada is selling...')
             console.log(adaSales)
             const guilds = await getInfoByGuilds(client);
@@ -29,10 +29,27 @@ module.exports = {
                 storeImage(sale.inventoryDefinition, client)
                 return sale.collectibleDefinition.hash
             });
-            await Promise.all(guilds.map(async g => {
-                await sendResetInfo(g, client, modHashes, adaSales);
-                console.log(`Sent info to ${g.guild.name} for clan ${g.clan.name}`);
+            const failures = [];
+            await Promise.all(guilds.map(g => {
+                if (!g.channel || !g.guild) {
+                    // no channel or guild
+                    return failures.push(g);
+                } else if (!g.clan || !g.members) {
+                     // no linked clan
+                    return sendStaticResetInfo(g, client, modHashes, adaSales).then(() => {
+                        console.log(`Sent static info to ${g.guild.name}`);
+                    });
+                }
+                else return sendResetInfo(g, client, modHashes, adaSales).then(() => {
+                    console.log(`Sent info to ${g.guild.name} for clan ${g.clan.name}`);
+                });
             }))
+                .then(() => { 
+                    if (failures.length) {
+                        console.error(`Failed to send reset info to ${failures.length} servers.`);
+                        console.log(failures);
+                    }
+                })
                 .then(updateMissingCache)
                 .then(() => resetListener.emit('success'));
         } catch (e) {
@@ -54,7 +71,7 @@ module.exports = {
 async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
     // sometimes ada is a prick (often)
     if (!modHashes.length) {
-        guildInfo.channel.send({ embeds: [headerEmbed(guildInfo.clan.name).setDescription(':(')] });
+        guildInfo.channel.send({ embeds: [headerEmbed(guildInfo.clan).setDescription(':(')] });
         return;
     }
     const statuses = await membersModStatuses(modHashes, guildInfo.members.map(m => {
@@ -87,40 +104,43 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
     /** @type {{[p: string]: DefsTriple}} */
     const mods = {}
     const embeds = [headerEmbed(guildInfo.clan),
-        ...await Promise.all(modsInfo.map(async m => {
-            const users = Object.keys(people).filter(k => m.missing.includes(k)).map(k => {
-                const disc = people[k].discord;
-                if (disc) {
-                    if (people[k].mentionable) pings.add(disc);
-                    if (!peopleMissingMods[disc]) peopleMissingMods[disc] = [];
-                    peopleMissingMods[disc].push(m.def.inventoryDefinition.displayProperties.name);
-                    return people[k].name + `  [<@${disc}>]`;
+        ...await Promise.all(modsInfo.map(async mod => {
+            const users = Object.keys(people).filter(kp => mod.missing.includes(kp)).map(kp => {
+                // nothing is stopping people from linking multiple discords to the same bungie account
+                const { accounts } = people[kp];
+                accounts?.forEach((acct) => {
+                    if (acct.mentionable) pings.add(acct.discord);
+                    if (!peopleMissingMods[acct.discord]) peopleMissingMods[acct.discord] = [];
+                    peopleMissingMods[acct.discord].push(mod.def.inventoryDefinition.displayProperties.name);
+                });
+                if (accounts?.length) {
+                    return people[kp].name + ` [${accounts.map(a => `<@${a.discord}>`).join(', ')}]`;
                 } else {
-                    return people[k].name;
+                    return people[kp].name;
                 }
             });
 
-            m.def.icon = await modIcons.get(m.def.inventoryDefinition.hash + '.png');
-            mods[m.def.inventoryDefinition.hash] = m.def;
+            mod.def.icon = await modIcons.get(mod.def.inventoryDefinition.hash + '.png');
+            mods[mod.def.inventoryDefinition.hash] = mod.def;
 
-            console.log({ [m.def.inventoryDefinition.hash]: users });
-            return (await modToEmbed(m.def))
+            console.log({ [mod.def.inventoryDefinition.hash]: users });
+            return modToEmbed(mod.def).then(embed => embed
                 .addFields({
                     name: 'Missing',
                     value: users.sort((a, b) => a.localeCompare(b)).join('\n') || 'Nobody :)',
                     inline: false
-                })
+                }))
         }))
     ];
-    guildInfo.channel.send({
+    return guildInfo.channel.send({
         embeds
     })
         .then(() => {
+        
+            console.log({ pings });
             if (pings.size) {
-                console.log({ pings });
                 guildInfo.channel.send({
                     content: [...pings]
-                        .sort((a, b) => a.localeCompare(b))
                         .map(p => `<@${p}>`)
                         .join(', ')
                 });
@@ -128,6 +148,30 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
         })
         .then(() => fs.writeFileSync('./local/mods.json', JSON.stringify(mods, null, 2)))
         .catch(console.error);
+
+}
+async function sendStaticResetInfo(guildInfo, client, modHashes, modDefs) {
+    // sometimes ada is a prick (often)
+    if (!modHashes.length) {
+        guildInfo.channel.send({ embeds: [staticHeaderEmbed().setDescription(':(')] });
+        return;
+    }
+    const modsInfo = modHashes.map(hash => {
+        return modDefs.find(def => def.collectibleDefinition.hash === hash);
+    });
+
+    const mods = {}
+    const embeds = [staticHeaderEmbed(guildInfo.clan),
+        ...await Promise.all(modsInfo.map(async def => {
+            def.icon = await modIcons.get(def.inventoryDefinition.hash + '.png');
+            mods[def.inventoryDefinition.hash] = def;
+            return modToEmbed(def);
+        }))
+    ];
+    return guildInfo.channel.send({
+        embeds
+    })
+    .catch(console.error);
 
 }
 
@@ -138,9 +182,9 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
  *     DestinyCollectibleState}}>}
  */
 async function membersModStatuses(hashes, member) {
-    return await Promise.all(member.map(async m => {
-        return (await import('../bungie-net-api/profile.mjs')).missingMods(hashes, m.membershipId,
-            m.membershipType);
+    return Promise.all(member.map(m => {
+        return import('../bungie-net-api/profile.mjs')
+        .then(({missingMods}) => missingMods(hashes, m.membershipId, m.membershipType));
     })).then(arr => {
         return Object.assign({}, ...arr.map((e) => ({ [e.membershipId]: e.data })));
     });
@@ -161,7 +205,35 @@ function headerEmbed(clan) {
             inline: false
         }, {
             name: 'Never miss a mod!',
-            value: 'Want to be pinged? `/register` with your Bungie Name and do `/mentions true` to never miss out when Ada is selling a mod you are missing!',
+            value: 'Want to be pinged? `/register` with your Bungie Name and do `/mentions true` to never miss out when Ada is selling a mod you are missing! Further, you can do `/remindme` to set a time for the bot to DM you when you are missing a mod.',
+            inline: false
+        })
+    // TODO Destiny2.GetClanBannerSource for the banner
+    // clan.clanInfo.clanBannerData
+}
+
+/**
+ * @param clan
+ * @return {EmbedBuilder}
+ */
+ function staticHeaderEmbed() {
+    return new EmbedBuilder()
+        .setTitle('Ada 1 Mods Today')
+        .addFields({
+            name: 'Combat-Style Mods',
+            value: 'Missing a mod? Head to Ada-1 in the tower and go purchase it! '
+                + 'Every day Ada has a small chance to sell powerful combat-style mods '
+                + 'from previous seasons that are not otherwise acquirable.',
+            inline: false
+        },
+        {
+            name: 'Register your clan!',
+            value: 'List everyone in your clan who is missing the mod by linking your `/clan` (requires Manage Server permissions)',
+            inline: false
+        },
+        {
+            name: 'Never miss a mod!',
+            value: 'Want to be pinged? `/register` with your Bungie Name and do `/mentions true` to never miss out when Ada is selling a mod you are missing! Further, you can do `/remindme` to set a time for the bot to DM you when you are missing a mod.',
             inline: false
         })
     // TODO Destiny2.GetClanBannerSource for the banner
@@ -230,39 +302,4 @@ async function modToEmbed(def) {
                 ...costs(def.inventoryDefinition.investmentStats)].join('\n\n'),
             inline: false
         })
-}
-
-/**
- *
- * @param { DestinyItemInvestmentStatDefinition[]} investmentStats
- */
-function costs(investmentStats) {
-    const arr = [];
-    investmentStats.forEach(stat => {
-        const hash = stat.statTypeHash;
-        if (hash === 2399985800) arr.push(`${stat.value} Void Energy`);
-        else if (hash === 3779394102) arr.push(`${stat.value} Arc Energy`);
-        else if (hash === 3344745325) arr.push(`${stat.value} Solar Energy`);
-        else if (hash === 998798867) arr.push(`${stat.value} Stasis Energy`);
-    });
-    return arr;
-}
-
-/**
- *
- * @param { DestinyItemInvestmentStatDefinition[]} investmentStats
- */
-function adjustments(investmentStats) {
-    const arr = [];
-    investmentStats.forEach(stat => {
-        const hash = stat.statTypeHash;
-        const c = stat.isConditionallyActive;
-        if (hash === 2996146975) arr.push(`${stat.value} Mobility${c ? '*' : ''}`);
-        else if (hash === 392767087) arr.push(`${stat.value} Resilience${c ? '*' : ''}`);
-        else if (hash === 1943323491) arr.push(`${stat.value} Recovery${c ? '*' : ''}`);
-        else if (hash === 1735777505) arr.push(`${stat.value} Discipline${c ? '*' : ''}`);
-        else if (hash === 144602215) arr.push(`${stat.value} Intellect${c ? '*' : ''}`);
-        else if (hash === 4244567218) arr.push(`${stat.value} Strength${c ? '*' : ''}`);
-    });
-    return arr;
 }

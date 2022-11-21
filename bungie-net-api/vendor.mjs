@@ -11,10 +11,12 @@ import { getDefinition, getDestinyInventoryItemDefinitions } from './manifest.mj
 async function getAdaSaleHashes() {
     return client.Destiny2.GetVendor({
         characterId: config.characterId,
+        // request with my (Newo#9010's) info
         destinyMembershipId: config.membershipId,
         membershipType: BungieMembershipType.TigerSteam,
         vendorHash: config.ada1Hash,
         components: [DestinyComponentType.VendorSales,
+            // unsure if I still need these components
         DestinyComponentType.ItemPerks, DestinyComponentType.ItemStats]
     }).then(({ Response }) => {
         return Object.keys(Response.sales.data).map(id => {
@@ -24,6 +26,7 @@ async function getAdaSaleHashes() {
 }
 
 /**
+ * A collection of relevant defs for an item
  * @typedef DefsTriple
  * @property {DestinyInventoryItemDefinition} inventoryDefinition
  * @property {DestinyCollectibleDefinition} collectibleDefinition
@@ -35,20 +38,23 @@ async function getAdaSaleHashes() {
  * @return {Promise<DefsTriple[]>}
  */
 export async function getAdaCombatModsSaleDefinitons(force) {
-    const hashes = await getAdaSaleHashes();
-    const inventoryItemDefinition = await getDestinyInventoryItemDefinitions(force);
-    return await Promise.all(hashes.map(h => {
+    const [hashes, inventoryItemDefinition] = await Promise.all([
+        getAdaSaleHashes(), 
+        getDestinyInventoryItemDefinitions(force)]);
+    return Promise.all(hashes.map(h => {
         return inventoryItemDefinition[h];
     }).filter(d => {
+        // should filter out all non-combat style mods
         return d.uiItemDisplayStyle === 'ui_display_style_energy_mod'
             && d.plug?.plugCategoryIdentifier.includes('enhancements.season_');
     }).map(async inventoryDefinition => {
+        const [collectibleDefinition, sandboxDefinition] = await Promise.all([
+            getDefinition(Components.DestinyCollectibleDefinition, inventoryDefinition.collectibleHash),
+            getDefinition(Components.DestinySandboxPerkDefinition, inventoryDefinition.perks[0].perkHash)]);
         return {
             inventoryDefinition,
-            collectibleDefinition: await getDefinition(Components.DestinyCollectibleDefinition,
-                inventoryDefinition.collectibleHash),
-            sandboxDefinition: await getDefinition(Components.DestinySandboxPerkDefinition,
-                inventoryDefinition.perks[0].perkHash)
+            collectibleDefinition,
+            sandboxDefinition
         }
     }));
 }

@@ -1,5 +1,6 @@
-const {SlashCommandBuilder, ChannelType} = require('discord.js');
-const {toggleMentionable} = require('../database/users');
+const { SlashCommandBuilder } = require('discord.js');
+const { toggleMentionable } = require('../database/users');
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('mentions')

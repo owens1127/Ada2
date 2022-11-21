@@ -1,5 +1,8 @@
 const mysql = require('mysql2');
 
+/**
+ * Represents a connection to the MySQL database
+ */
 class Connection {
     constructor() {
         this.con = mysql.createConnection({
@@ -12,9 +15,20 @@ class Connection {
             if (err) throw err
         });
     }
-    query(str, callback) {
-        this.con.query(str, callback)
-        this.con.end();
+    /**
+     * Wraps a MySQL query in an async promise
+     * @param {string} str the query string
+     * @returns {Promise<RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>}
+     */
+    async query(str) {
+        return new Promise((resolve, reject) => {
+            this.con.query(str, (err, result) => {
+                console.log('Processed SQL query: ' + str.split('\n').map(l => l.trim()).join(' '));
+                if (err) reject(err);
+                else resolve(result);
+            });
+            this.con.end();
+        });
     }
 }
 
@@ -27,13 +41,5 @@ exports.escape = (val) => {
  * @return {Promise<RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>}
  */
 exports.dbQuery = (query) => {
-    return new Promise((resolve, reject) => {
-        const con = new Connection();
-        con.query(query, (err, result) => {
-            console.log('Processed SQL query: ' + query.split('\n').map(l => l.trim()).join(' '));
-            if (err) reject(err);
-            else resolve(result);
-        });
-    });
-
+   return new Connection().query(query);
 }

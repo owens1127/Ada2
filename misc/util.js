@@ -27,3 +27,8 @@ exports.nextReset = () => {
     reset.setUTCDate(reset.getUTCDate() + 1);
     return reset;
 }
+
+exports.round = (n, d) => {
+    const tens = Math.pow(10, d);
+    return Math.round(tens * n) / tens;
+}

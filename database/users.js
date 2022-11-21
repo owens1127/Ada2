@@ -1,5 +1,6 @@
 const config = require('../config.json');
 const { dbQuery, escape } = require('./util');
+const { round } = require('../misc/util');
 
 /**
  * @typedef UsersResponse
@@ -11,9 +12,9 @@ const { dbQuery, escape } = require('./util');
  */
 
 /**
- *
- * @param userId
- * @param foo
+ * Toggles the mentionable field to foo for the user
+ * @param {string} userId
+ * @param {boolean} foo
  * @return {Promise<boolean>}
  */
 exports.toggleMentionable = async (userId, foo) => {
@@ -26,9 +27,9 @@ exports.toggleMentionable = async (userId, foo) => {
 }
 
 /**
- *
- * @param userId
- * @param delta
+ * Updates the reminder time for a user
+ * @param {string} userId
+ * @param {number} delta
  * @return {Promise<string>}
  */
 exports.updateReminderTime = async (userId, delta) => {
@@ -49,27 +50,27 @@ exports.updateReminderTime = async (userId, delta) => {
 }
 
 /**
- *
- * @param userId
+ * Removes a reminder time for a user
+ * @param {string} userId
  */
 exports.disableReminders = async (userId) => {
     if (!await inDb(userId)) throw new Error('You be registered to disable reminders');
     const query = `UPDATE ${config.userTable}
                    SET remind_time = NULL
                    WHERE discord_id = ${escape(userId)};`
-    await dbQuery(query);
+    dbQuery(query);
 }
 
 /**
- *
- * @param bungieName
- * @param userId
- * @param mentionable
+ * Tethers a discord account to a bungie account
+ * @param {string} bungieName
+ * @param {string} userId
+ * @param {boolean} mentionable
  * @return {Promise<string>}
  */
 exports.linkAccounts = async (bungieName, userId, mentionable) => {
-    const { findMemberDetails } = await import('../bungie-net-api/profile.mjs');
-    const member = await findMemberDetails(bungieName);
+    const member = await import('../bungie-net-api/profile.mjs')
+    .then(({findMemberDetails}) => findMemberDetails(bungieName));
     const query = `INSERT INTO ${config.userTable} (discord_id, destiny_membership_id,
                                                     destiny_membership_type, mentionable)
                    VALUES (${escape(userId)}, ${escape(member.membershipId)},
@@ -83,26 +84,30 @@ exports.linkAccounts = async (bungieName, userId, mentionable) => {
 
 /**
  * Mutates the members dictionary and the pings array
+ * @param {{[membership_id: string]}} members
  * @return {Promise<void>}
  */
 exports.bungieMembersToMentionable = async (members) => {
     const query = `SELECT destiny_membership_id, discord_id, mentionable, remind_time
                    FROM ${config.userTable}
                    WHERE destiny_membership_id IN (${escape(Object.keys(members))});`
-    await dbQuery(query)
+    return dbQuery(query)
         .then(data => {
             console.log(data);
             data.forEach(/** @type UsersResponse */rdp => {
-                members[rdp.destiny_membership_id].discord = rdp.discord_id
-                members[rdp.destiny_membership_id].mentionable = !!rdp.mentionable
-                members[rdp.destiny_membership_id].remind_time = rdp.remind_time
+                members[rdp.destiny_membership_id].accounts = members[rdp.destiny_membership_id].accounts || [];
+                members[rdp.destiny_membership_id].accounts.push({
+                    discord: rdp.discord_id,
+                    mentionable: !!rdp.mentionable,
+                    remind_time: rdp.remind_time
+                });
             })
         });
 }
 
 /**
- *
- * @param {{hours, minutes}}delta
+ * Gets a list of members with a remind time this minute
+ * @param {number} delta
  * @return {Promise<string[]>}
  */
 exports.getMembersPerDelta = async (delta) => {
@@ -117,14 +122,14 @@ exports.getMembersPerDelta = async (delta) => {
         });
 }
 
-function round(n, d) {
-    const tens = Math.pow(10, d);
-    return Math.round(tens * n) / tens;
-}
-
-async function inDb(userId) {
+/**
+ * Is a discord user in the database?
+ * @param {string} discord 
+ * @returns {Promise<boolean>}
+ */
+async function inDb(discord) {
     const query = `SELECT COUNT(1)
                    FROM ${config.userTable}
-                   WHERE discord_id = ${userId};`
+                   WHERE discord_id = ${discord};`
     return !!(await dbQuery(query))[0]['COUNT(1)'];
 }
