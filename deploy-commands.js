@@ -1,5 +1,6 @@
 const { REST, Routes } = require('discord.js');
 const fs = require('node:fs');
+const config = require('./config.json');
 
 const token = process.env.DISCORD_TOKEN
 const clientId = process.env.CLIENT_ID
@@ -7,11 +8,17 @@ const clientId = process.env.CLIENT_ID
 const commands = [];
 // Grab all the command files from the commands directory you created earlier
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const devCommands = [];
+const devCommandFiles = fs.readdirSync('./dev-commands').filter(file => file.endsWith('.js'));
 
 // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
     commands.push(command.data.toJSON());
+}
+for (const file of devCommandFiles) {
+    const command = require(`./dev-commands/${file}`);
+    devCommands.push(command.data.toJSON());
 }
 
 // Construct and prepare an instance of the REST module
@@ -22,10 +29,6 @@ const rest = new REST({ version: '10' }).setToken(token);
     try {
         console.log(`Started refreshing ${commands.length} application (/) commands.`);
 
-        rest.put(Routes.applicationCommands(clientId), { body: [] })
-            .then(() => console.log('Successfully removed all commands.'))
-            .catch(console.error);
-
         // The put method is used to fully refresh all commands in the guild with the current set
         const data = await rest.put(
             Routes.applicationCommands(clientId),
@@ -33,6 +36,15 @@ const rest = new REST({ version: '10' }).setToken(token);
         );
 
         console.log(`Successfully reloaded ${data.length} application (/) commands.`);
+
+        console.log(`Started refreshing ${devCommands.length} guild application (/) commands.`);
+
+        const data2 = await rest.put(
+            Routes.applicationGuildCommands(clientId, config.devServer),
+            { body: devCommands },
+        );
+
+        console.log(`Successfully reloaded ${data2.length} application (/) commands.`);
     } catch (error) {
         // And of course, make sure you catch and log any errors!
         console.error(error);
