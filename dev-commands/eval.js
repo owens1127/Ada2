@@ -12,14 +12,20 @@ module.exports = {
                 .setRequired(true)),
     async execute(interaction) {
         await interaction.deferReply()
+        const replacer = (key, value) => {
+          if(value instanceof Map) {
+             return Array.from(value).reduce((obj, [key, value]) => {
+                obj[key] = value;
+                return obj;
+            }, {});
+          } else {
+            return value;
+          }
+        }
         const query = interaction.options.getString('query');
         const { client } = interaction;
         try {
-            const str = JSON.stringify(eval(query), null, 2) || 'void';
-            if (str.length > 20_000) {
-                console.log(str);
-                return await interaction.editReply('Stringified eval length > 20,000');
-            }
+            const str = JSON.stringify(eval(query), replacer, 2) || 'void';
             await interaction.editReply('\`\`\`' + str.substring(0, 1994) + '\`\`\`');
 
             let i = 1;
