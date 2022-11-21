@@ -36,7 +36,7 @@ exports.modEnergyType = (statTypeHash) => {
             return '/res/arc_overlay.png';
         case 998798867: // stasis
             return '/res/stasis_overlay.png';
-        default: return null;
+        default: return null; // no element
     }
 }
 

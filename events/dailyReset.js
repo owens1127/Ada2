@@ -38,20 +38,24 @@ module.exports = {
                      // no linked clan
                     return sendStaticResetInfo(g, client, modHashes, adaSales).then(() => {
                         console.log(`Sent static info to ${g.guild.name}`);
-                    });
+                    })
+                    .catch(() => failures.push(g));
                 }
                 else return sendResetInfo(g, client, modHashes, adaSales).then(() => {
                     console.log(`Sent info to ${g.guild.name} for clan ${g.clan.name}`);
-                });
+                }).catch(() => failures.push(g));;
             }))
                 .then(() => { 
                     if (failures.length) {
                         console.error(`Failed to send reset info to ${failures.length} servers.`);
-                        console.log(failures);
                     }
                 })
                 .then(updateMissingCache)
-                .then(() => resetListener.emit('success'));
+                .then(() => resetListener.emit('success'))
+                .catch(e => {
+                    console.log('UNCAUGHT EXCEPTION SENDING EMBEDS:');
+                    console.error(e);
+                });
         } catch (e) {
             resetListener.emit('failure', e);
         }
@@ -71,8 +75,7 @@ module.exports = {
 async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
     // sometimes ada is a prick (often)
     if (!modHashes.length) {
-        guildInfo.channel.send({ embeds: [headerEmbed(guildInfo.clan).setDescription(':(')] });
-        return;
+        return guildInfo.channel.send({ embeds: [headerEmbed(guildInfo.clan).setDescription(':(')] });
     }
     const statuses = await membersModStatuses(modHashes, guildInfo.members.map(m => {
         return {
@@ -147,7 +150,6 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
             }
         })
         .then(() => fs.writeFileSync('./local/mods.json', JSON.stringify(mods, null, 2)))
-        .catch(console.error);
 
 }
 async function sendStaticResetInfo(guildInfo, client, modHashes, modDefs) {
@@ -171,8 +173,6 @@ async function sendStaticResetInfo(guildInfo, client, modHashes, modDefs) {
     return guildInfo.channel.send({
         embeds
     })
-    .catch(console.error);
-
 }
 
 /**
@@ -254,12 +254,15 @@ async function storeImage(def, client) {
     const iconUrl = 'https://bungie.net' + def.displayProperties.icon
     modIcons.set(name, fetch(iconUrl)
         .then(res => res.buffer())
-        .then(buff => sharp(buff)
+        .then(buff => {
+            if (overlayUrl) return sharp(buff)
             .composite([{
                 input: '.' + overlayUrl
             }])
             .png()
-            .toBuffer())
+            .toBuffer()
+            else return buff;
+        })
         .then(img => client.channels.fetch(config.images)
             .then(channel => channel.send({
                 files: [{
