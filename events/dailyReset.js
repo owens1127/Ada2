@@ -39,11 +39,17 @@ module.exports = {
                     return sendStaticResetInfo(g, client, modHashes, adaSales).then(() => {
                         console.log(`Sent static info to ${g.guild.name}`);
                     })
-                    .catch(() => failures.push(g));
+                    .catch(() => {
+                        console.log(`Failed to send static info to ${g.guild?.name}`);
+                        failures.push(g)
+                    });
                 }
                 else return sendResetInfo(g, client, modHashes, adaSales).then(() => {
                     console.log(`Sent info to ${g.guild.name} for clan ${g.clan.name}`);
-                }).catch(() => failures.push(g));;
+                }).catch(() => {
+                    console.log(`Failed to send info to ${g.guild?.name} for clan ${g.clan?.name}`);
+                    failures.push(g)
+                });;
             }))
                 .then(() => { 
                     if (failures.length) {
@@ -53,11 +59,13 @@ module.exports = {
                 .then(updateMissingCache)
                 .then(() => resetListener.emit('success'))
                 .catch(e => {
-                    console.log('UNCAUGHT EXCEPTION SENDING EMBEDS:');
+                    console.log('UNCAUGHT EXCEPTION SENDING EMBEDS');
                     console.error(e);
                 });
         } catch (e) {
-            resetListener.emit('failure', e);
+            console.log('EMITTING FAILURE');
+            console.error(e);
+            // resetListener.emit('failure', e);
         }
     }
 };
@@ -126,7 +134,6 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
             mod.def.icon = await modIcons.get(mod.def.inventoryDefinition.hash + '.png');
             mods[mod.def.inventoryDefinition.hash] = mod.def;
 
-            console.log({ [mod.def.inventoryDefinition.hash]: users });
             return modToEmbed(mod.def).then(embed => embed
                 .addFields({
                     name: 'Missing',
@@ -137,9 +144,7 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
     ];
     return guildInfo.channel.send({
         embeds
-    })
-        .then(() => {
-        
+    }).then(() => {
             console.log({ pings });
             if (pings.size) {
                 guildInfo.channel.send({
