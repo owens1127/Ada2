@@ -49,6 +49,5 @@ function sendGreeting(channels, guild) {
                 })
         ]
     })
-        .then(m => console.log(`Sent how-to embed in ${m.guild.name} ${m.channel.name}`))
         .catch(console.error)
 }

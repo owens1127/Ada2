@@ -32,3 +32,20 @@ exports.round = (n, d) => {
     const tens = Math.pow(10, d);
     return Math.round(tens * n) / tens;
 }
+
+/**
+ * 
+ * @param {any[]} iterable 
+ * @param {function} f 
+ * @returns 
+ */
+exports.andmap = (iterable, f) => {
+    let foo = true;
+    for (n in iterable) {
+        if (!f(n)) {
+            foo = false;
+            break;
+        }
+    }
+    return foo;
+}

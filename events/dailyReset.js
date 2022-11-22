@@ -1,7 +1,7 @@
 const fs = require('node:fs');
 const sharp = require('sharp');
 const fetch = require('node-fetch-commonjs');
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, Collection } = require('discord.js');
 const { bungieMembersToMentionable } = require('../database/users.js');
 const { getInfoByGuilds } = require('../database/guilds.js');
 const { modEnergyType, colorFromEnergy, adjustments, costs } = require('../bungie-net-api/util')
@@ -38,22 +38,35 @@ module.exports = {
                      // no linked clan
                     return sendStaticResetInfo(g, client, modHashes, adaSales).then(() => {
                         console.log(`Sent static info to ${g.guild.name}`);
+                    })
+                    .catch(() => {
+                        console.log(`Failed to send static info to ${g.guild?.name}`);
+                        failures.push(g)
                     });
                 }
                 else return sendResetInfo(g, client, modHashes, adaSales).then(() => {
                     console.log(`Sent info to ${g.guild.name} for clan ${g.clan.name}`);
-                });
+                }).catch((e) => {
+                    console.error(e);
+                    console.log(`Failed to send info to ${g.guild?.name} for clan ${g.clan?.name}`);
+                    failures.push(g)
+                });;
             }))
                 .then(() => { 
                     if (failures.length) {
                         console.error(`Failed to send reset info to ${failures.length} servers.`);
-                        console.log(failures);
                     }
                 })
                 .then(updateMissingCache)
-                .then(() => resetListener.emit('success'));
+                .then(() => resetListener.emit('success'))
+                .catch(e => {
+                    console.log('UNCAUGHT EXCEPTION SENDING EMBEDS');
+                    console.error(e);
+                });
         } catch (e) {
-            resetListener.emit('failure', e);
+            console.log('EMITTING FAILURE');
+            console.error(e);
+            // resetListener.emit('failure', e);
         }
     }
 };
@@ -71,8 +84,7 @@ module.exports = {
 async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
     // sometimes ada is a prick (often)
     if (!modHashes.length) {
-        guildInfo.channel.send({ embeds: [headerEmbed(guildInfo.clan).setDescription(':(')] });
-        return;
+        return guildInfo.channel.send({ embeds: [headerEmbed(guildInfo.clan).setDescription(':(')] });
     }
     const statuses = await membersModStatuses(modHashes, guildInfo.members.map(m => {
         return {
@@ -83,8 +95,8 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
     const modsInfo = modHashes.map(hash => {
         const def = modDefs.find(def => def.collectibleDefinition.hash === hash);
         const missing = [];
-        Object.keys(statuses).forEach(memId => {
-            if (statuses[memId][hash] % 2 === 1) missing.push(memId);
+        statuses.forEach((mem, memId) => {
+            if (mem.get(hash) % 2 === 1) missing.push(memId);
         })
         return { def, missing };
     });
@@ -123,7 +135,6 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
             mod.def.icon = await modIcons.get(mod.def.inventoryDefinition.hash + '.png');
             mods[mod.def.inventoryDefinition.hash] = mod.def;
 
-            console.log({ [mod.def.inventoryDefinition.hash]: users });
             return modToEmbed(mod.def).then(embed => embed
                 .addFields({
                     name: 'Missing',
@@ -134,9 +145,7 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
     ];
     return guildInfo.channel.send({
         embeds
-    })
-        .then(() => {
-        
+    }).then(() => {
             console.log({ pings });
             if (pings.size) {
                 guildInfo.channel.send({
@@ -147,7 +156,6 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
             }
         })
         .then(() => fs.writeFileSync('./local/mods.json', JSON.stringify(mods, null, 2)))
-        .catch(console.error);
 
 }
 async function sendStaticResetInfo(guildInfo, client, modHashes, modDefs) {
@@ -171,23 +179,19 @@ async function sendStaticResetInfo(guildInfo, client, modHashes, modDefs) {
     return guildInfo.channel.send({
         embeds
     })
-    .catch(console.error);
-
 }
 
 /**
  * @param {number[]} hashes
- * @param {{membershipId: string, membershipType: string}[]} member
- * @return {Promise<{[membershipId: string]: {[hash: string]:
- *     DestinyCollectibleState}}>}
+ * @param {{membershipId: string, membershipType: string}[]} members
+ * @return {Promise<Collection<string, Collection<string, number>}
  */
-async function membersModStatuses(hashes, member) {
-    return Promise.all(member.map(m => {
+async function membersModStatuses(hashes, members) {
+    return Promise.all(members.map(m => {
         return import('../bungie-net-api/profile.mjs')
-        .then(({missingMods}) => missingMods(hashes, m.membershipId, m.membershipType));
-    })).then(arr => {
-        return Object.assign({}, ...arr.map((e) => ({ [e.membershipId]: e.data })));
-    });
+            .then(({missingMods}) => missingMods(hashes, m.membershipId, m.membershipType))
+            .then(collectionOfHashes => [m.membershipId, collectionOfHashes]);
+    })).then(pairs => new Collection(pairs));
 }
 
 /**
@@ -254,12 +258,15 @@ async function storeImage(def, client) {
     const iconUrl = 'https://bungie.net' + def.displayProperties.icon
     modIcons.set(name, fetch(iconUrl)
         .then(res => res.buffer())
-        .then(buff => sharp(buff)
+        .then(buff => {
+            if (overlayUrl) return sharp(buff)
             .composite([{
                 input: '.' + overlayUrl
             }])
             .png()
-            .toBuffer())
+            .toBuffer()
+            else return buff;
+        })
         .then(img => client.channels.fetch(config.images)
             .then(channel => channel.send({
                 files: [{

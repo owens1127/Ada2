@@ -110,3 +110,12 @@ async function membersPromise(rdp, client) {
             client.channels.fetch(rdp.broadcast_channel).catch(() => null)]);
         return { clan, guild, channel, members: results };
 }
+
+/**
+ * Gets a list of all channelIds
+ * @returns string[]
+ */
+exports.getAllChannels = async () => {
+    const query = `SELECT broadcast_channel FROM ${config.guildTable};`
+    return dbQuery(query).then(data => data.map(rdp => rdp.broadcast_channel).filter(c => !!c));
+}

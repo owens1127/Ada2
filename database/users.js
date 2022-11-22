@@ -93,7 +93,6 @@ exports.bungieMembersToMentionable = async (members) => {
                    WHERE destiny_membership_id IN (${escape(Object.keys(members))});`
     return dbQuery(query)
         .then(data => {
-            console.log(data);
             data.forEach(/** @type UsersResponse */rdp => {
                 members[rdp.destiny_membership_id].accounts = members[rdp.destiny_membership_id].accounts || [];
                 members[rdp.destiny_membership_id].accounts.push({
@@ -116,10 +115,7 @@ exports.getMembersPerDelta = async (delta) => {
                    WHERE MOD(remind_time + 24, 24) > ${round(delta - 1 / 60, 2)}
                      AND MOD(remind_time + 24, 24) <= ${round(delta, 2)};`
     return dbQuery(query)
-        .then(data => {
-            console.log(data);
-            return data.map(data => data.discord_id);
-        });
+        .then(data => data.map(data => data.discord_id));
 }
 
 /**

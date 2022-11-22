@@ -24,6 +24,7 @@ module.exports = {
         }
         const query = interaction.options.getString('query');
         const { client } = interaction;
+        // const { profiles } = await import('../bungie-net-api/profile.mjs')
         try {
             const str = JSON.stringify(eval(query), replacer, 2) || 'void';
             await interaction.editReply('\`\`\`' + str.substring(0, 1994) + '\`\`\`');

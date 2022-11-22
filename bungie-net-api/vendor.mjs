@@ -2,7 +2,7 @@ import { Components } from 'oodestiny/manifest/index.js';
 import { BungieMembershipType, DestinyComponentType } from 'oodestiny/schemas/index.js';
 import config from '../config.json' assert { type: 'json' };
 import { client } from './main.mjs';
-import { getDefinition, getDestinyInventoryItemDefinitions } from './manifest.mjs';
+import { getDefinition, getDestinyInventoryItemDefinitions, isCombatStyleMod } from './manifest.mjs';
 
 /**
  * Returns the available hashes at Ada-1
@@ -43,11 +43,7 @@ export async function getAdaCombatModsSaleDefinitons(force) {
         getDestinyInventoryItemDefinitions(force)]);
     return Promise.all(hashes.map(h => {
         return inventoryItemDefinition[h];
-    }).filter(d => {
-        // should filter out all non-combat style mods
-        return d.uiItemDisplayStyle === 'ui_display_style_energy_mod'
-            && d.plug?.plugCategoryIdentifier.includes('enhancements.season_');
-    }).map(async inventoryDefinition => {
+    }).filter(isCombatStyleMod).map(async inventoryDefinition => {
         const [collectibleDefinition, sandboxDefinition] = await Promise.all([
             getDefinition(Components.DestinyCollectibleDefinition, inventoryDefinition.collectibleHash),
             getDefinition(Components.DestinySandboxPerkDefinition, inventoryDefinition.perks[0].perkHash)]);
