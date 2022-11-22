@@ -30,7 +30,7 @@ exports.updateBroadcastChannel = async (guildId, channel) => {
  */
 exports.linkGuild = async (guildId, clanId) => {
     // get the clan info from bungie api
-    const clan = await import('../bungie-net-api/clan.mjs').then(({getClan}) => getClan(clanId));
+    const clan = await import('../bungie-net-api/clan.mjs').then(({ getClan }) => getClan(clanId));
     // update the clan group id for this server
     const query = `INSERT INTO ${config.guildTable} (guild_id, clan_id)
                    VALUES (${escape(guildId)}, ${escape(clan.groupId)}) ON DUPLICATE KEY
@@ -46,11 +46,11 @@ exports.linkGuild = async (guildId, clanId) => {
  * @param {string} clanId
  * @return {Promise<string>} the new clan name
  */
- exports.unlinkGuild = async (guildId) => {
+exports.unlinkGuild = async (guildId) => {
     // get the clan info from bungie api
     const query = `INSERT INTO ${config.guildTable} (guild_id, clan_id)
                    VALUES (${escape(guildId)}, NULL) ON DUPLICATE KEY
-                   UPDATE clan_id = NULL;`
+    UPDATE clan_id = NULL;`
     return await dbQuery(query);
 }
 
@@ -89,26 +89,28 @@ exports.getInfoByGuilds = async (client) => {
  * @return {Promise<GuildInfoObject>}
  */
 async function membersPromise(rdp, client) {
-        let members;
-        let page = 1;
-        let results = [];
-        do {
-            await import('../bungie-net-api/clan.mjs').then(({getMembersOfClan}) => getMembersOfClan(rdp.clan_id, page)
+    let members;
+    let page = 1;
+    let results = [];
+    const { getMembersOfClan } = await import('../bungie-net-api/clan.mjs');
+    do {
+        await getMembersOfClan(rdp.clan_id, page)
             .then(srogm => {
                 members = srogm;
                 results.push(...members.results);
                 page++;
             })
-            .catch(() => results = null));
-        }
-        while (members?.hasMore);
+            .catch(() => results = null);
+    }
+    while (members?.hasMore);
 
-        const [clan, guild, channel] = await Promise.all([
-            // TODO more detailed error handling instead of just nulling
-            import('../bungie-net-api/clan.mjs').then(({getClan}) => getClan(rdp.clan_id)).catch(() => null),
-            client.guilds.fetch(rdp.guild_id).catch(() => null),
-            client.channels.fetch(rdp.broadcast_channel).catch(() => null)]);
-        return { clan, guild, channel, members: results };
+    const [clan, guild, channel] = await Promise.all([
+        // TODO more detailed error handling instead of just nulling
+        import('../bungie-net-api/clan.mjs').then(({ getClan }) => getClan(rdp.clan_id))
+            .catch(() => null),
+        client.guilds.fetch(rdp.guild_id).catch(() => null),
+        client.channels.fetch(rdp.broadcast_channel).catch(() => null)]);
+    return { clan, guild, channel, members: results };
 }
 
 /**
@@ -116,6 +118,7 @@ async function membersPromise(rdp, client) {
  * @returns string[]
  */
 exports.getAllChannels = async () => {
-    const query = `SELECT broadcast_channel FROM ${config.guildTable};`
+    const query = `SELECT broadcast_channel
+                   FROM ${config.guildTable};`
     return dbQuery(query).then(data => data.map(rdp => rdp.broadcast_channel).filter(c => !!c));
 }

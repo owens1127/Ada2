@@ -49,3 +49,14 @@ exports.andmap = (iterable, f) => {
     }
     return foo;
 }
+
+/**
+ * Waits for a delay then returns a void promise
+ * @param time
+ * @return {Promise<void>}
+ */
+exports.wait = async (time) => {
+    return new Promise(resolve => {
+        setTimeout(resolve, time)
+    })
+}

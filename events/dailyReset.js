@@ -39,22 +39,26 @@ module.exports = {
                     return sendStaticResetInfo(g, client, modHashes, adaSales).then(() => {
                         console.log(`Sent static info to ${g.guild.name}`);
                     })
-                    .catch(() => {
+                    .catch((e) => {
                         console.log(`Failed to send static info to ${g.guild?.name}`);
+                        console.error(e)
                         failures.push(g)
                     });
                 }
                 else return sendResetInfo(g, client, modHashes, adaSales).then(() => {
                     console.log(`Sent info to ${g.guild.name} for clan ${g.clan.name}`);
                 }).catch((e) => {
-                    console.error(e);
                     console.log(`Failed to send info to ${g.guild?.name} for clan ${g.clan?.name}`);
+                    console.error(e);
                     failures.push(g)
-                });;
+                });
             }))
                 .then(() => { 
                     if (failures.length) {
-                        console.error(`Failed to send reset info to ${failures.length} servers.`);
+                        console.error(`Failed to send reset info to ${failures.length} servers. Retrying now...`);
+                        return retryFailures(failures, client, modHashes, adaSales).then(count => {
+                            console.log(`Sent info to ${count} servers on the second attempt.`)
+                        });
                     }
                 })
                 .then(updateMissingCache)
@@ -169,7 +173,7 @@ async function sendStaticResetInfo(guildInfo, client, modHashes, modDefs) {
     });
 
     const mods = {}
-    const embeds = [staticHeaderEmbed(guildInfo.clan),
+    const embeds = [staticHeaderEmbed(),
         ...await Promise.all(modsInfo.map(async def => {
             def.icon = await modIcons.get(def.inventoryDefinition.hash + '.png');
             mods[def.inventoryDefinition.hash] = def;
@@ -309,4 +313,36 @@ async function modToEmbed(def) {
                 ...costs(def.inventoryDefinition.investmentStats)].join('\n\n'),
             inline: false
         })
+}
+
+/**
+ *
+ * @param list
+ * @param client
+ * @param modHashes
+ * @param adaSales
+ * @return {Promise<unknown>[]>}
+ */
+async function retryFailures(list, client, modHashes, adaSales) {
+    let count = 0;
+    return Promise.all(list.map(g => {
+        if (!g.channel || !g.guild) {
+            // no channel or guild
+        } else if (!g.clan || !g.members) {
+            // no linked clan
+            return sendStaticResetInfo(g, client, modHashes, adaSales).then(() => {
+                console.log(`Sent static info to ${g.guild.name}`);
+                count++;
+            })
+                .catch((e) => {
+                    console.error(e)
+                });
+        }
+        else return sendResetInfo(g, client, modHashes, adaSales).then(() => {
+                console.log(`Sent info to ${g.guild.name} for clan ${g.clan.name}`);
+                count++;
+            }).catch((e) => {
+                console.error(e);
+            });
+    })).then(() => count);
 }
