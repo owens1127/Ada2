@@ -1,7 +1,6 @@
 import { Collection } from 'discord.js';
 import { BungieMembershipType, DestinyComponentType } from 'oodestiny/schemas/index.js';
 import { client } from './main.mjs';
-import { andmap } from '../misc/util.js'
 
 class Profile {
     constructor() {
@@ -9,7 +8,7 @@ class Profile {
          * Item Hash mapped to collectible value
          * @type {DestinyCollectibleComponent}
          */
-        this.collectibles = {}
+        this.collectibles = new Collection();
     }
 }
 
@@ -51,8 +50,8 @@ export async function findMemberDetails(bungieName) {
  * @return {Promise<Collection<number,number>>} Collection of hashes mapped to numbers
  */
 export async function missingMods(hashes, membershipId, membershipType) {
-    if (andmap(hashes, (hash) => profiles.cache.get(membershipId)?.collectibles)) {
-        return new Collection(hashes.forEach((hash) => [hash, profiles.cache.get(membershipId).collectibles[hash]]));
+    if (profiles.cache.get(membershipId)?.collectibles) {
+        return new Collection(hashes.forEach((hash) => [hash, profiles.cache.get(membershipId).collectibles[hash]?.state || 0]));
     } else {
         return client.Destiny2.GetProfile({
             destinyMembershipId: membershipId,
@@ -60,12 +59,13 @@ export async function missingMods(hashes, membershipId, membershipType) {
             components: [DestinyComponentType.Collectibles]
         }).then(r => {
             // note: privacy might prevent some profiles from returning the components
-            const collectiblesComponent = r.Response.profileCollectibles.data?.collectibles
+            const collectiblesComponent = r.Response.profileCollectibles.data?.collectibles || {}
             const p = new Profile();
-            p.collectibles = collectiblesComponent;
+    
             profiles.cache.set(membershipId, p);
-            return new Collection(hashes.forEach((hash) => {
-                return [hash, collectiblesComponent ? collectiblesComponent[hash].state : 0]
+            return new Collection(hashes.map((hash) => {
+                p.collectibles.set(hash, collectiblesComponent[hash])
+                return [hash, collectiblesComponent[hash]?.state || 0]
             }));
         });
     }

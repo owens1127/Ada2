@@ -46,7 +46,8 @@ module.exports = {
                 }
                 else return sendResetInfo(g, client, modHashes, adaSales).then(() => {
                     console.log(`Sent info to ${g.guild.name} for clan ${g.clan.name}`);
-                }).catch(() => {
+                }).catch((e) => {
+                    console.error(e);
                     console.log(`Failed to send info to ${g.guild?.name} for clan ${g.clan?.name}`);
                     failures.push(g)
                 });;
@@ -116,7 +117,7 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
     const mods = {}
     const embeds = [headerEmbed(guildInfo.clan),
         ...await Promise.all(modsInfo.map(async mod => {
-            const users = Object.keys(people).filter(kp => !mod.missing.includes(kp)).map(kp => {
+            const users = Object.keys(people).filter(kp => mod.missing.includes(kp)).map(kp => {
                 // nothing is stopping people from linking multiple discords to the same bungie account
                 const { accounts } = people[kp];
                 accounts?.forEach((acct) => {

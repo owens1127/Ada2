@@ -22,9 +22,9 @@ function clearManifestCache() {
  * @returns 
  */
 async function destinyManifest(force) {
-    console.log('Fetching Destiny 2 Manifest');
     cache.manifest =
         cache.manifest && !force ? cache.manifest : await (() => {
+            console.log('Fetching Destiny 2 Manifest');
             setTimeout(clearManifestCache, 60 * 60000);
             return client.Destiny2.GetDestinyManifest().then(r => r.Response);
         })();
@@ -48,6 +48,22 @@ export async function getDestinyInventoryItemDefinitions(force) {
 }
 
 /**
+ * Gets the DestinyDestinyCollectibleDefinitions in english
+ * @param {boolean} force force a fetch
+ * @return {Promise<{[p: number]: DestinyCollectibleDefinition}>}
+ */
+ export async function getDestinyCollectibleDefinition(force) {
+    cache.DestinyCollectibleDefinition =
+        cache.DestinyCollectibleDefinition && !force ? cache.DestinyCollectibleDefinition
+            : Manifest.getDestinyManifestComponent({
+                destinyManifest: await destinyManifest(force),
+                tableName: Manifest.Components.DestinyCollectibleDefinition,
+                language: 'en'
+            });
+    return cache.DestinyCollectibleDefinition;
+}
+
+/**
  * Get a manifest definition for a specifc hash
  * @template T
  * @param {T} definition
@@ -59,4 +75,13 @@ export async function getDefinition(definition, hash) {
         entityType: definition,
         hashIdentifier: hash
     }).then(r => r.Response);
+}
+/**
+ * Should filter out all non-combat style mods
+ * @param {DestinyInventoryItemDefinition} def 
+ * @returns {boolean}
+ */
+export function isCombatStyleMod(def) {
+        return def.uiItemDisplayStyle === 'ui_display_style_energy_mod'
+            && def.plug?.plugCategoryIdentifier.includes('enhancements.season_');
 }
