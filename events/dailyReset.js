@@ -1,7 +1,7 @@
 const fs = require('node:fs');
 const sharp = require('sharp');
 const fetch = require('node-fetch-commonjs');
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, Collection } = require('discord.js');
 const { bungieMembersToMentionable } = require('../database/users.js');
 const { getInfoByGuilds } = require('../database/guilds.js');
 const { modEnergyType, colorFromEnergy, adjustments, costs } = require('../bungie-net-api/util')
@@ -94,8 +94,8 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
     const modsInfo = modHashes.map(hash => {
         const def = modDefs.find(def => def.collectibleDefinition.hash === hash);
         const missing = [];
-        Object.keys(statuses).forEach(memId => {
-            if (statuses[memId][hash] % 2 === 1) missing.push(memId);
+        statuses.forEach((mem, memId) => {
+            if (mem.get(hash) % 2 === 1) missing.push(memId);
         })
         return { def, missing };
     });
@@ -116,7 +116,7 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
     const mods = {}
     const embeds = [headerEmbed(guildInfo.clan),
         ...await Promise.all(modsInfo.map(async mod => {
-            const users = Object.keys(people).filter(kp => mod.missing.includes(kp)).map(kp => {
+            const users = Object.keys(people).filter(kp => !mod.missing.includes(kp)).map(kp => {
                 // nothing is stopping people from linking multiple discords to the same bungie account
                 const { accounts } = people[kp];
                 accounts?.forEach((acct) => {
@@ -182,17 +182,15 @@ async function sendStaticResetInfo(guildInfo, client, modHashes, modDefs) {
 
 /**
  * @param {number[]} hashes
- * @param {{membershipId: string, membershipType: string}[]} member
- * @return {Promise<{[membershipId: string]: {[hash: string]:
- *     DestinyCollectibleState}}>}
+ * @param {{membershipId: string, membershipType: string}[]} members
+ * @return {Promise<Collection<string, Collection<string, number>}
  */
-async function membersModStatuses(hashes, member) {
-    return Promise.all(member.map(m => {
+async function membersModStatuses(hashes, members) {
+    return Promise.all(members.map(m => {
         return import('../bungie-net-api/profile.mjs')
-        .then(({missingMods}) => missingMods(hashes, m.membershipId, m.membershipType));
-    })).then(arr => {
-        return Object.assign({}, ...arr.map((e) => ({ [e.membershipId]: e.data })));
-    });
+            .then(({missingMods}) => missingMods(hashes, m.membershipId, m.membershipType))
+            .then(collectionOfHashes => [m.membershipId, collectionOfHashes]);
+    })).then(pairs => new Collection(pairs));
 }
 
 /**

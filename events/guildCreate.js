@@ -49,6 +49,5 @@ function sendGreeting(channels, guild) {
                 })
         ]
     })
-        .then(m => console.log(`Sent message: ${m.content} in ${m.channel.name}`))
         .catch(console.error)
 }

@@ -25,7 +25,7 @@ async function commandInteraction(interaction) {
             await interaction.reply(
                 {content: 'There was an error while executing this command!', ephemeral: true});
         } catch (e) {
-            await interaction.editReply(
+            await interaction.reply(
                 {content: 'There was an error while executing this command!', ephemeral: true});
         }
     }
