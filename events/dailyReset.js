@@ -99,10 +99,12 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
     const modsInfo = modHashes.map(hash => {
         const def = modDefs.find(def => def.collectibleDefinition.hash === hash);
         const missing = [];
+        const errors = [];
         statuses.forEach((mem, memId) => {
+            if (mem.get(hash) === -1) errors.push(memId);
             if (mem.get(hash) % 2 === 1) missing.push(memId);
         })
-        return { def, missing };
+        return { def, missing, errors };
     });
     const people = Object.assign({}, ...guildInfo.members.map((m) => {
         return {
@@ -136,15 +138,24 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
                 }
             });
 
+            const errors = Object.keys(people).filter(kp => mod.errors.includes(kp));
+
             mod.def.icon = await modIcons.get(mod.def.inventoryDefinition.hash + '.png');
             mods[mod.def.inventoryDefinition.hash] = mod.def;
 
-            return modToEmbed(mod.def).then(embed => embed
-                .addFields({
+            return modToEmbed(mod.def).then(embed => {
+                embed.addFields({
                     name: 'Missing',
                     value: users.sort((a, b) => a.localeCompare(b)).join('\n') || 'Nobody :)',
                     inline: false
-                }))
+                })
+                if (errors.length) embed.addFields({
+                    name: 'Errors',
+                    value: errors.join('\n'),
+                    inline: false
+                })
+                return embed;
+            });
         }))
     ];
     return guildInfo.channel.send({
@@ -187,7 +198,7 @@ async function sendStaticResetInfo(guildInfo, client, modHashes, modDefs) {
 
 /**
  * @param {number[]} hashes
- * @param {{membershipId: string, membershipType: string}[]} members
+ * @param {{membershipId: string, membershipType: number}[]} members
  * @return {Promise<Collection<string, Collection<string, number>}
  */
 async function membersModStatuses(hashes, members) {
@@ -296,7 +307,7 @@ function updateMissingCache() {
 
 /**
  * @param { DefsTriple } def
- * @return EmbedBuilder
+ * @return Promise<EmbedBuilder>
  */
 async function modToEmbed(def) {
     return new EmbedBuilder()

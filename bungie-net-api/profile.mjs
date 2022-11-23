@@ -6,7 +6,7 @@ class Profile {
     constructor() {
         /**
          * Item Hash mapped to collectible value
-         * @type {DestinyCollectibleComponent}
+         * @type {Collection<number,number>}
          */
         this.collectibles = new Collection();
     }
@@ -16,7 +16,7 @@ export const profiles = {
     /**
      * @type {Collection<string,Profile>}
      */
-    cache: new Collection(),
+    cache: new Collection()
 }
 
 /**
@@ -39,7 +39,7 @@ export async function findMemberDetails(bungieName) {
                 name: r.Response[0].bungieGlobalDisplayName + '#'
                     + r.Response[0].bungieGlobalDisplayNameCode
             };
-    });
+        });
 }
 
 /**
@@ -51,7 +51,8 @@ export async function findMemberDetails(bungieName) {
  */
 export async function missingMods(hashes, membershipId, membershipType) {
     if (profiles.cache.get(membershipId)?.collectibles) {
-        return new Collection(hashes.forEach((hash) => [hash, profiles.cache.get(membershipId).collectibles[hash]?.state || 0]));
+        return new Collection(hashes.map(
+            (hash) => [hash, profiles.cache.get(membershipId).collectibles[hash]?.state || 0]));
     } else {
         return client.Destiny2.GetProfile({
             destinyMembershipId: membershipId,
@@ -61,13 +62,17 @@ export async function missingMods(hashes, membershipId, membershipType) {
             // note: privacy might prevent some profiles from returning the components
             const collectiblesComponent = r.Response.profileCollectibles.data?.collectibles || {}
             const p = new Profile();
-    
+
             profiles.cache.set(membershipId, p);
             return new Collection(hashes.map((hash) => {
                 p.collectibles.set(hash, collectiblesComponent[hash])
-                return [hash, collectiblesComponent[hash]?.state || 0]
+                return [hash, collectiblesComponent[hash]?.state ?? -1]
             }));
-        });
+        })
+            // if profile is not found
+            .catch(e => new Collection(hashes.map((hash) => {
+                return [hash, -1]
+            })));
     }
 
 }
