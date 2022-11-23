@@ -1,4 +1,4 @@
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 
 module.exports = {
     name: 'guildCreate',
@@ -13,17 +13,15 @@ module.exports = {
 
 function sendGreeting(channels, guild) {
     let welcome;
-    const textChannels = channels.cache.filter(c => c.type === 0);
-    if (guild.systemChannelId) {
-        welcome = textChannels.get(guild.systemChannelId)
-    } else if (guild.widgetChannelId) {
-        welcome = textChannels.get(guild.widgetChannelId)
-    } else if (textChannels.find(c => c.name === 'general')) {
-        welcome = textChannels.find(c => c.name === 'general');
-    } else {
-        welcome = textChannels.filter(c => !c.nsfw).first();
-    }
-    welcome.send({
+    const textChannels = channels.cache.filter(c => c.type === 0
+        && c.permissionsFor(guild.client.user)
+            .has(PermissionFlagsBits.SendMessages | PermissionFlagsBits.ViewChannel));
+    welcome = textChannels.get(guild.systemChannelId)
+        || textChannels.get(guild.widgetChannelId)
+        || textChannels.find(c => c.name === 'general')
+        || textChannels.first();
+
+    welcome?.send({
         embeds: [
             new EmbedBuilder()
                 .setTitle('Ada-2 Discord Bot')
