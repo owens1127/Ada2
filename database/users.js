@@ -96,9 +96,10 @@ exports.linkAccounts = async (bungieName, userId, guild, mentionable) => {
  * @return {Promise<void>}
  */
 exports.bungieMembersToMentionable = async (members) => {
+    const snowflakes = members.map((v, k) => k).join(', ');
     const query = `SELECT destiny_membership_id, discord_id, mentionable, remind_time, primary_guild
                    FROM ${config.userTable}
-                   WHERE destiny_membership_id IN (${members.map((v, k) => k)});`
+                   WHERE ${snowflakes ? `destiny_membership_id IN (${snowflakes})` : '0'};`
     return dbQuery(query)
         .then(data => {
             data.forEach(/** @type UsersResponse */rdp => {
