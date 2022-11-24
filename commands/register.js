@@ -25,7 +25,7 @@ module.exports = {
         const name = interaction.options.getString('bungie-name');
         const mentionable = interaction.options.getBoolean('mentionable') || false;
         try {
-            const bungieName = await linkAccounts(name, interaction.user.id, mentionable)
+            const bungieName = await linkAccounts(name, interaction.user.id, interaction.guild, mentionable)
             await interaction.editReply({
                 content: `Discord account ${interaction.user.toString()} successfully linked to Bungie.net account \`${bungieName}\` with mentions set to \`${mentionable}\``
             });

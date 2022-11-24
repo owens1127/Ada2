@@ -1,5 +1,6 @@
 const { dbQuery, escape } = require('./util');
 const config = require('../config.json')
+const { getMembersInGuild } = require('./users.js');
 
 /**
  * @typedef GuildResponse
@@ -55,12 +56,18 @@ exports.unlinkGuild = async (guildId) => {
 }
 
 /**
+ * @typedef DestinyMemberInfo
+ * @property {string} membershipId
+ * @property {number} membershipType
+ */
+
+/**
  * All built-out info for a guild
  * @typedef GuildInfoObject
  * @property {Guild} guild
- * @property {GroupV2} clan
+ * @property {GroupV2} [clan]
  * @property {TextChannel} channel
- * @property {GroupMember[]} members
+ * @property {DestinyMemberInfo[]} members
  */
 
 /**
@@ -72,13 +79,13 @@ exports.getInfoByGuilds = async (client) => {
     const query = `SELECT *
                    FROM ${config.guildTable};`
     return dbQuery(query).then(async data => {
-        console.log(data);
         /** @type {GuildInfoObject[]} */
         return Promise.all(
-            data.map(rdp => membersPromise(rdp, client).catch((e) => {
-                console.error(`Error for guild ${rdp.guild_id}: ${e}`)
-                return {};
-            })));
+            data.map(rdp => membersPromise(rdp, client)
+                .catch((e) => {
+                    console.error(`Error for guild ${rdp.guild_id}: ${e}`)
+                    return {};
+                })));
     })
 }
 
@@ -86,28 +93,42 @@ exports.getInfoByGuilds = async (client) => {
  *
  * @param {GuildResponse} rdp - RowDataPacket
  * @param client
- * @return {Promise<GuildInfoObject>}
+ * @return {Promise<DestinyMemberInfo>}
  */
 async function membersPromise(rdp, client) {
-    let members;
-    let page = 1;
     let results = [];
-    const { getMembersOfClan } = await import('../bungie-net-api/clan.mjs');
-    do {
-        await getMembersOfClan(rdp.clan_id, page)
-            .then(srogm => {
-                members = srogm;
-                results.push(...members.results);
-                page++;
-            })
-            .catch(() => results = null);
+    if (rdp.clan_id) {
+        let members;
+        let page = 1;
+        const { getMembersOfClan } = await import('../bungie-net-api/clan.mjs');
+        do {
+            await getMembersOfClan(rdp.clan_id, page)
+                .then(srogm => {
+                    members = srogm;
+                    results.push(...members.results.map(r => {
+                        return {
+                            ...r.destinyUserInfo,
+                            // old accounts might not have a bungieGlobalDisplayName set up yet
+                            name: r.destinyUserInfo.bungieGlobalDisplayName
+                                ? r.destinyUserInfo.bungieGlobalDisplayName + '#'
+                                + r.destinyUserInfo.bungieGlobalDisplayNameCode
+                                : r.destinyUserInfo.displayName
+                        }
+                    }));
+                    page++;
+                })
+                .catch(() => results = null);
+        }
+        while (members?.hasMore);
+    } else {
+        results = await getMembersInGuild(rdp.guild_id);
     }
-    while (members?.hasMore);
 
     const [clan, guild, channel] = await Promise.all([
         // TODO more detailed error handling instead of just nulling
-        import('../bungie-net-api/clan.mjs').then(({ getClan }) => getClan(rdp.clan_id))
-            .catch(() => null),
+        rdp.clan_id ? import('../bungie-net-api/clan.mjs').then(
+            ({ getClan }) => getClan(rdp.clan_id))
+            .catch(() => null) : null,
         client.guilds.fetch(rdp.guild_id).catch(() => null),
         client.channels.fetch(rdp.broadcast_channel).catch(() => null)]);
     return { clan, guild, channel, members: results };

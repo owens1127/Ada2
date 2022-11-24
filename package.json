@@ -13,6 +13,7 @@
     "start": "sh start.sh",
     "reload-commands": "sh dev/deploy-commands.sh",
     "test-bot": "sh dev/test-bot.sh",
+    "test-bot-live-db": "sh dev/test-bot-live-database.sh",
     "test-bot-deploy-commands": "sh dev/test-bot-deploy-commands.sh"
   },
   "devDependencies": {

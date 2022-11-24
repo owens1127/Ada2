@@ -19,6 +19,12 @@ export const profiles = {
     cache: new Collection()
 }
 
+export async function getProfile(membershipId, membershipType) {
+    return client.Destiny2.GetLinkedProfiles(
+        { membershipId, membershipType })
+        .then(r => r.Response);
+}
+
 /**
  * Finds the details on a member
  * @param {string} bungieName

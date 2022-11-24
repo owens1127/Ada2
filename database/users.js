@@ -5,8 +5,10 @@ const { round } = require('../misc/util');
 /**
  * @typedef UsersResponse
  * @property {string} discord_id
+ * @property {string} primary_guild
  * @property {string} destiny_membership_id
  * @property {number} destiny_membership_type
+ * @property {string} destiny_cached_username
  * @property {boolean} mentionable
  * @property {number} remind_time
  */
@@ -58,25 +60,31 @@ exports.disableReminders = async (userId) => {
     const query = `UPDATE ${config.userTable}
                    SET remind_time = NULL
                    WHERE discord_id = ${escape(userId)};`
-    dbQuery(query);
+    return dbQuery(query);
 }
 
 /**
  * Tethers a discord account to a bungie account
  * @param {string} bungieName
  * @param {string} userId
+ * @param {Guild} guild
  * @param {boolean} mentionable
  * @return {Promise<string>}
  */
-exports.linkAccounts = async (bungieName, userId, mentionable) => {
+exports.linkAccounts = async (bungieName, userId, guild, mentionable) => {
     const member = await import('../bungie-net-api/profile.mjs')
-    .then(({findMemberDetails}) => findMemberDetails(bungieName));
-    const query = `INSERT INTO ${config.userTable} (discord_id, destiny_membership_id,
-                                                    destiny_membership_type, mentionable)
-                   VALUES (${escape(userId)}, ${escape(member.membershipId)},
-                           ${escape(member.membershipType)}, ${mentionable}) ON DUPLICATE KEY
+        .then(({ findMemberDetails }) => findMemberDetails(bungieName));
+    const query = `INSERT INTO ${config.userTable} (discord_id, primary_guild,
+                                                    destiny_membership_id,
+                                                    destiny_membership_type,
+                                                    destiny_cached_username, mentionable)
+                   VALUES (${escape(userId)}, ${escape(guild.id)}, ${escape(member.membershipId)},
+                           ${escape(member.membershipType)}, ${escape(member.name)},
+                           ${mentionable}) ON DUPLICATE KEY
     UPDATE destiny_membership_id = ${escape(member.membershipId)},
+        primary_guild = ${escape(guild.id)},
         destiny_membership_type = ${escape(member.membershipType)},
+        destiny_cached_username = ${escape(member.name)},
         mentionable = ${mentionable};`
     await dbQuery(query);
     return member.name;
@@ -84,19 +92,21 @@ exports.linkAccounts = async (bungieName, userId, mentionable) => {
 
 /**
  * Mutates the members dictionary and the pings array
- * @param {{[membership_id: string]}} members
+ * @param {Collection<string, {name}>} members
  * @return {Promise<void>}
  */
 exports.bungieMembersToMentionable = async (members) => {
-    const query = `SELECT destiny_membership_id, discord_id, mentionable, remind_time
+    const query = `SELECT destiny_membership_id, discord_id, mentionable, remind_time, primary_guild
                    FROM ${config.userTable}
-                   WHERE destiny_membership_id IN (${escape(Object.keys(members))});`
+                   WHERE destiny_membership_id IN (${members.map((v, k) => k)});`
     return dbQuery(query)
         .then(data => {
             data.forEach(/** @type UsersResponse */rdp => {
-                members[rdp.destiny_membership_id].accounts = members[rdp.destiny_membership_id].accounts || [];
-                members[rdp.destiny_membership_id].accounts.push({
+                members.get(rdp.destiny_membership_id).accounts =
+                    members.get(rdp.destiny_membership_id).accounts || [];
+                members.get(rdp.destiny_membership_id).accounts.push({
                     discord: rdp.discord_id,
+                    primary_guild: rdp.primary_guild,
                     mentionable: !!rdp.mentionable,
                     remind_time: rdp.remind_time
                 });
@@ -120,7 +130,7 @@ exports.getMembersPerDelta = async (delta) => {
 
 /**
  * Is a discord user in the database?
- * @param {string} discord 
+ * @param {string} discord
  * @returns {Promise<boolean>}
  */
 async function inDb(discord) {
@@ -128,4 +138,21 @@ async function inDb(discord) {
                    FROM ${config.userTable}
                    WHERE discord_id = ${discord};`
     return !!(await dbQuery(query))[0]['COUNT(1)'];
+}
+
+/**
+ *
+ * @return {Promise<{membershipType, membershipId}[]>}
+ */
+exports.getMembersInGuild = async (guildId) => {
+    const query = `SELECT destiny_membership_id, destiny_membership_type, destiny_cached_username
+                   FROM ${config.userTable}
+                   WHERE primary_guild = ${guildId}`
+    return dbQuery(query).then(data => data.map(user => {
+        return {
+            membershipId: user.destiny_membership_id,
+            membershipType: user.destiny_membership_type,
+            name: user.destiny_cached_username
+        }
+    }))
 }

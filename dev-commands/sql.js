@@ -16,10 +16,11 @@ module.exports = {
         await interaction.deferReply();
         await dbQuery(interaction.options.getString('query'))
         .then(async data => {
-            await interaction.editReply('\`\`\`' + JSON.stringify(data, null, 2).substring(0,1994) + '\`\`\`');
+            const str = JSON.stringify(data, null, 2);
+            await interaction.editReply('\`\`\`' + str.substring(0,1994) + '\`\`\`');
 
             let i = 1;
-            while (str.length > 2000 * i) {
+            while (str.length > 1994 * i) {
                 await interaction.channel.send('\`\`\`' + str.substring(1994 * i, 1994 * (i+1)) + '\`\`\`');
                 i++;
             }
