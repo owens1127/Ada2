@@ -100,17 +100,18 @@ exports.bungieMembersToMentionable = async (members) => {
     const query = `SELECT destiny_membership_id, discord_id, mentionable, remind_time, primary_guild
                    FROM ${config.userTable}
                    WHERE ${snowflakes ? `destiny_membership_id IN (${snowflakes})` : '0'};`
-    return dbQuery(query)
+   return dbQuery(query)
         .then(data => {
             data.forEach(/** @type UsersResponse */rdp => {
-                members.get(rdp.destiny_membership_id).accounts =
-                    members.get(rdp.destiny_membership_id).accounts || [];
-                members.get(rdp.destiny_membership_id).accounts.push({
-                    discord: rdp.discord_id,
-                    primary_guild: rdp.primary_guild,
-                    mentionable: !!rdp.mentionable,
-                    remind_time: rdp.remind_time
-                });
+                if (members.get(rdp.destiny_membership_id)) {
+                    members.get(rdp.destiny_membership_id).accounts =
+                        [...members.get(rdp.destiny_membership_id).accounts ?? [], {
+                            discord: rdp.discord_id,
+                            primary_guild: rdp.primary_guild,
+                            mentionable: !!rdp.mentionable,
+                            remind_time: rdp.remind_time
+                        }];
+                }
             })
         });
 }
