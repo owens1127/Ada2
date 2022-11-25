@@ -6,5 +6,6 @@
   "guildTable" : "guilds_info",
   "UTCResetHour": 17,
   "images": "1042307315623276584",
-  "devServer": "478229341139107860"
+  "devServer": "478229341139107860",
+  "color": "#bfd3ff"
 }

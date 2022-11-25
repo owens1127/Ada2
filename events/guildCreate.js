@@ -1,5 +1,5 @@
 const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-
+const config = require('../config')
 module.exports = {
     name: 'guildCreate',
     on: true,
@@ -25,7 +25,7 @@ function sendGreeting(channels, guild) {
         embeds: [
             new EmbedBuilder()
                 .setTitle('Ada-2 Discord Bot')
-                .setColor('#ceecf2')
+                .setColor(config.color)
                 .setThumbnail(guild.client.user.avatarURL() || guild.client.user.defaultAvatarURL)
                 .addFields({
                     name: 'Server Admins',

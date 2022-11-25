@@ -6,7 +6,8 @@ const { getMembersInGuild } = require('./users.js');
  * @typedef GuildResponse
  * @property {string} guild_id
  * @property {string} broadcast_channel
- * @property {string} clan_id}
+ * @property {string} clan_id
+ * @property {boolean} tips_option
  */
 /**
  * Updates the broadcast channel for a guild
@@ -56,6 +57,20 @@ exports.unlinkGuild = async (guildId) => {
 }
 
 /**
+ * Disable the tips option
+ * @param {string} guildId
+ * @param {boolean} foo
+ * @return {Promise<void>}
+ */
+exports.toggleTipsOption = async (guildId, foo) => {
+    // update the tips option
+    const query = `INSERT INTO ${config.guildTable} (guild_id, tips_option)
+                   VALUES (${escape(guildId)}, ${escape(foo)}) ON DUPLICATE KEY
+    UPDATE tips_option = ${escape(foo)};`
+    return dbQuery(query);
+}
+
+/**
  * @typedef DestinyMemberInfo
  * @property {string} membershipId
  * @property {number} membershipType
@@ -68,6 +83,7 @@ exports.unlinkGuild = async (guildId) => {
  * @property {GroupV2} [clan]
  * @property {TextChannel} channel
  * @property {DestinyMemberInfo[]} members
+ * @property {{tips: boolean}} options
  */
 
 /**
@@ -81,7 +97,7 @@ exports.getInfoByGuilds = async (client) => {
     return dbQuery(query).then(async data => {
         /** @type {GuildInfoObject[]} */
         return Promise.all(
-            data.map(rdp => membersPromise(rdp, client)
+            data.map(rdp => infoForGuid(rdp, client)
                 .catch((e) => {
                     console.error(`Error for guild ${rdp.guild_id}: ${e}`)
                     return {};
@@ -95,7 +111,7 @@ exports.getInfoByGuilds = async (client) => {
  * @param client
  * @return {Promise<DestinyMemberInfo>}
  */
-async function membersPromise(rdp, client) {
+async function infoForGuid(rdp, client) {
     let results = [];
     if (rdp.clan_id) {
         let members;
@@ -124,14 +140,14 @@ async function membersPromise(rdp, client) {
         results = await getMembersInGuild(rdp.guild_id, client);
     }
 
+    const options = {tips: rdp.tips_option}
     const [clan, guild, channel] = await Promise.all([
-        // TODO more detailed error handling instead of just nulling
         rdp.clan_id ? import('../bungie-net-api/clan.mjs').then(
             ({ getClan }) => getClan(rdp.clan_id))
             .catch(() => null) : null,
         client.guilds.fetch(rdp.guild_id).catch(() => null),
         client.channels.fetch(rdp.broadcast_channel).catch(() => null)]);
-    return { clan, guild, channel, members: results };
+    return { clan, guild, channel, members: results, options };
 }
 
 /**
