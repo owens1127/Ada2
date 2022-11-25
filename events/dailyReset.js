@@ -87,7 +87,8 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
         return guildInfo.channel.send({
             embeds: [header
                 .setDescription('No Mods :(')]
-        });
+        })
+            .then(() => fs.writeFileSync('./local/mods.json', JSON.stringify({}, null, 2)));
     }
 
     const statuses = await membersModStatuses(modHashes, guildInfo.members);
