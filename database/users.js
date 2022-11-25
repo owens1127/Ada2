@@ -100,7 +100,7 @@ exports.bungieMembersToMentionable = async (members) => {
     const query = `SELECT destiny_membership_id, discord_id, mentionable, remind_time, primary_guild
                    FROM ${config.userTable}
                    WHERE ${snowflakes ? `destiny_membership_id IN (${snowflakes})` : '0'};`
-   return dbQuery(query)
+    return dbQuery(query)
         .then(data => {
             data.forEach(/** @type UsersResponse */rdp => {
                 if (members.get(rdp.destiny_membership_id)) {

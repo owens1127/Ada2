@@ -39,7 +39,8 @@ module.exports = {
                         console.log(
                             `Sent info to ${g.guild.name} for ${g.clan?.name ?? g.guild.name}`);
                     }).catch((e) => {
-                        console.log(`Failed to ${g.guild.name} for ${g.clan?.name ?? g.guild.name}`);
+                        console.log(
+                            `Failed to ${g.guild.name} for ${g.clan?.name ?? g.guild.name}`);
                         console.error(e);
                         failures.push(g)
                     });
@@ -50,7 +51,8 @@ module.exports = {
                         console.error(
                             `Failed to send reset info to ${failures.length} servers. Retrying now...`);
                         return retryFailures(failures, client, modHashes, adaSales).then(count => {
-                            console.log(`Sent info to ${count} / ${failures.length} servers on the second attempt.`)
+                            console.log(
+                                `Sent info to ${count} / ${failures.length} servers on the second attempt.`)
                         });
                     }
                 })
@@ -121,7 +123,12 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
                     // account
                     const { accounts } = person;
                     accounts?.forEach((acct) => {
-                        if (acct.mentionable && person.primary_guild === guildInfo.guild) pings.add(acct.discord);
+                        // not everyone has a primary guild for now
+                        if (acct.mentionable && (!acct.primary_guild || acct.primary_guild
+                            === guildInfo.guild.id)) {
+                            pings.add(
+                                acct.discord);
+                        }
                         if (!peopleMissingMods[acct.discord]) peopleMissingMods[acct.discord] = [];
                         peopleMissingMods[acct.discord].push(
                             mod.def.inventoryDefinition.displayProperties.name);
@@ -157,7 +164,7 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
     return guildInfo.channel.send({
         embeds
     }).then(() => {
-        console.log({ pings });
+        console.log({ embeds: embeds.length, pings });
         if (pings.size) {
             guildInfo.channel.send({
                 content: [...pings]
