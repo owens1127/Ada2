@@ -121,7 +121,7 @@ async function membersPromise(rdp, client) {
         }
         while (members?.hasMore);
     } else {
-        results = await getMembersInGuild(rdp.guild_id);
+        results = await getMembersInGuild(rdp.guild_id, client);
     }
 
     const [clan, guild, channel] = await Promise.all([

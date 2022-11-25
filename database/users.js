@@ -1,6 +1,7 @@
 const config = require('../config.json');
 const { dbQuery, escape } = require('./util');
 const { round } = require('../misc/util');
+const { Collection } = require('discord.js')
 
 /**
  * @typedef UsersResponse
@@ -12,6 +13,11 @@ const { round } = require('../misc/util');
  * @property {boolean} mentionable
  * @property {number} remind_time
  */
+
+/**
+ * @type Collection<string, UsersResponse>
+ */
+const cache = new Collection();
 
 /**
  * Toggles the mentionable field to foo for the user
@@ -143,18 +149,31 @@ async function inDb(discord) {
 }
 
 /**
- *
+ * @param guildId
+ * @param client
  * @return {Promise<{membershipType, membershipId}[]>}
  */
-exports.getMembersInGuild = async (guildId) => {
-    const query = `SELECT destiny_membership_id, destiny_membership_type, destiny_cached_username
-                   FROM ${config.userTable}
-                   WHERE primary_guild = ${guildId}`
-    return dbQuery(query).then(data => data.map(user => {
+exports.getMembersInGuild = async (guildId, client) => {
+    /** @type {string[]} */
+    const gMemberIds = await client.guilds.fetch(guildId)
+        .then(g => g.members.fetch({ cache: false })
+            .then(members => members.map(m => m.id)))
+    const data = cache.size ? cache : await dbQuery(`SELECT discord_id,
+                                                            destiny_membership_id,
+                                                            destiny_membership_type,
+                                                            destiny_cached_username
+                                                     FROM ${config.userTable}`)
+        .then(data => {
+            data.forEach(rdp => cache.set(rdp.discord_id, rdp));
+            setTimeout(cache.clear, 1800000)
+            return cache;
+        });
+
+    return data.filter((user, id) => gMemberIds.includes(id)).map(user => {
         return {
             membershipId: user.destiny_membership_id,
             membershipType: user.destiny_membership_type,
             name: user.destiny_cached_username
         }
-    }))
+    })
 }
