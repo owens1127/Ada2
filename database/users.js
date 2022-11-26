@@ -165,7 +165,7 @@ exports.getMembersInGuild = async (guildId, client) => {
                                                      FROM ${config.userTable}`)
         .then(data => {
             data.forEach(rdp => cache.set(rdp.discord_id, rdp));
-            setTimeout(cache.clear, 1800000)
+            setTimeout(() => cache.clear(), 10000)
             return cache;
         });
 
