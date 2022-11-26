@@ -1,5 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { updateReminderTime, disableReminders } = require('../database/users');
+const { nextReset } = require('../misc/util.js');
+const config = require('../config.json');
 
 module.exports = {
     remindString,
@@ -25,10 +27,16 @@ module.exports = {
             /** @type number */
             const delta = interaction.options.getNumber('delta');
             try {
-                const str = await remindString(interaction.user.id, delta)
-                await interaction.editReply({ content: `Updated reminder time to \`${str}\`.` })
+                const time = nextReset();
+                time.setUTCHours(config.UTCResetHour + delta);
+                const str = await remindString(interaction.user.id, delta);
+                await interaction.editReply({
+                    content: `Updated reminder time to about ${str}. Your reminder will be DMed to you at <t:${time.getTime()
+                    / 1000}:t> local time`
+                })
             } catch (e) {
-                await interaction.editReply({ content: `Failed to update reminder time: \`${e.message}\``})
+                await interaction.editReply(
+                    { content: `Failed to update reminder time: \`${e.message}\`` })
             }
         } else if (interaction.options.getSubcommand() === 'disable') {
             try {

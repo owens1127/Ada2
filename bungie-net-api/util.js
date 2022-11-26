@@ -52,6 +52,7 @@ exports.costs = (investmentStats) => {
         else if (hash === 3779394102) arr.push(`${stat.value} Arc Energy`);
         else if (hash === 3344745325) arr.push(`${stat.value} Solar Energy`);
         else if (hash === 998798867) arr.push(`${stat.value} Stasis Energy`);
+        else if (hash === 3578062600) arr.push(`${stat.value} Energy`);
     });
     return arr;
 }
