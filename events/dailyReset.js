@@ -30,6 +30,7 @@ module.exports = {
                 return sale.collectibleDefinition.hash
             });
             const failures = [];
+            const start = Date.now();
             await Promise.all(guilds.map(g => {
                 if (!g.channel || !g.guild || !g.members) {
                     // no channel, guild, or error with members
@@ -56,6 +57,7 @@ module.exports = {
                         });
                     }
                 })
+                .then(() => console.log(`Finished in ${(Date.now() - start) / 1000} seconds (${(Date.now() - start) / 1000 / guilds.length} seconds per guild)`))
                 .then(updateMissingCache)
                 .then(() => resetListener.emit('success'))
                 .catch(e => {
