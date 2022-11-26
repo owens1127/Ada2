@@ -1,5 +1,5 @@
 'use strict';
-const { Client, GatewayIntentBits, Collection, Options } = require('discord.js');
+const { Client, GatewayIntentBits, Collection, Options, ActivityType } = require('discord.js');
 const fs = require('node:fs');
 const path = require('path');
 
@@ -8,6 +8,13 @@ const token = process.env.DISCORD_TOKEN
 // Create a new main instance
 const client = new Client({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
+    presence: {
+        status: 'online',
+        activities: [{
+            name: 'Ada-1\'s inventory',
+            type: ActivityType.Watching
+        }]
+    },
     makeCache: Options.cacheWithLimits({
         ApplicationCommandManager: 0,
         AutoModerationRuleManager: 0,
@@ -50,7 +57,6 @@ const client = new Client({
             }
         }
     }
-
 });
 
 client.commands = new Collection();
