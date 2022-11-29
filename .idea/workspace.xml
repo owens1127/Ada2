@@ -4,11 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="41d2deed-006a-4d0b-b38f-1cc2eb1a763e" name="Changes" comment="Added option to disable tips">
+    <list default="true" id="41d2deed-006a-4d0b-b38f-1cc2eb1a763e" name="Changes" comment="fixed bug">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bungie-net-api/util.js" beforeDir="false" afterPath="$PROJECT_DIR$/bungie-net-api/util.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/mods.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/mods.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/remindme.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/remindme.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/guilds.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/guilds.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,7 +64,7 @@
       <recent name="$PROJECT_DIR$/" />
     </key>
   </component>
-  <component name="RunManager" selected="npm.test-bot">
+  <component name="RunManager" selected="npm.test-bot-live-db">
     <configuration name="test-bot-deploy-commands.sh" type="ShConfigurationType" temporary="true">
       <option name="SCRIPT_TEXT" value="" />
       <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
@@ -122,10 +122,10 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="npm.test-bot-live-db" />
         <item itemvalue="npm.test-bot" />
         <item itemvalue="npm.reload-commands" />
         <item itemvalue="npm.test-bot-deploy-commands" />
-        <item itemvalue="npm.test-bot-live-db" />
         <item itemvalue="Shell Script.test-bot-deploy-commands.sh" />
       </list>
     </recent_temporary>
@@ -147,6 +147,10 @@
       <workItem from="1669148415445" duration="3927000" />
       <workItem from="1669221682078" duration="21197000" />
       <workItem from="1669410905710" duration="5491000" />
+      <workItem from="1669480670805" duration="2587000" />
+      <workItem from="1669501967106" duration="215000" />
+      <workItem from="1669503581495" duration="457000" />
+      <workItem from="1669741446088" duration="2251000" />
     </task>
     <task id="LOCAL-00001" summary="removed unnecessary await statements">
       <created>1668438231324</created>
@@ -330,7 +334,35 @@
       <option name="project" value="LOCAL" />
       <updated>1669414086461</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="Added timestamps">
+      <created>1669480710301</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1669480710301</updated>
+    </task>
+    <task id="LOCAL-00028" summary="bot presence/status">
+      <created>1669482444012</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1669482444012</updated>
+    </task>
+    <task id="LOCAL-00029" summary="log time for reset">
+      <created>1669483405175</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1669483405176</updated>
+    </task>
+    <task id="LOCAL-00030" summary="fixed bug">
+      <created>1669489702603</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1669489702603</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -348,10 +380,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fixed missing returns causing undefined errors" />
-    <MESSAGE value="manifest was not being re-queried on fail" />
-    <MESSAGE value="fixed undefined error when no users are missing the mod" />
-    <MESSAGE value="added the elemental overlay to all mods in the embed" />
     <MESSAGE value="added more logging context" />
     <MESSAGE value="fixed duplicate pings, added more info to embeds" />
     <MESSAGE value="added mentionable parameter to register command" />
@@ -373,6 +401,10 @@
     <MESSAGE value="cache db queries for reset guild members" />
     <MESSAGE value="reduced memory footprint" />
     <MESSAGE value="Added option to disable tips" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added option to disable tips" />
+    <MESSAGE value="Added timestamps" />
+    <MESSAGE value="bot presence/status" />
+    <MESSAGE value="log time for reset" />
+    <MESSAGE value="fixed bug" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed bug" />
   </component>
 </project>

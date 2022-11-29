@@ -6,7 +6,7 @@
     "discord.js": "^14.6.0",
     "mysql2": "^2.3.3",
     "node-fetch-commonjs": "^3.2.4",
-    "oodestiny": "^1.5.0",
+    "oodestiny": "^1.5.2",
     "sharp": "^0.31.2"
   },
   "scripts": {

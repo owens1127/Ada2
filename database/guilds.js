@@ -115,9 +115,10 @@ async function infoForGuid(rdp, client) {
     let results = [];
     if (rdp.clan_id) {
         let members;
-        let page = 1;
+        let page = 0;
         const { getMembersOfClan } = await import('../bungie-net-api/clan.mjs');
         do {
+            page++;
             await getMembersOfClan(rdp.clan_id, page)
                 .then(srogm => {
                     members = srogm;
