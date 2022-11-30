@@ -122,7 +122,7 @@ async function infoForGuid(rdp, client) {
             await getMembersOfClan(rdp.clan_id, page)
                 .then(srogm => {
                     members = srogm;
-                    results.push(...members.results.map(r => {
+                    results.push(...members.results.filter(r => !!r.destinyUserInfo).map(r => {
                         return {
                             ...r.destinyUserInfo,
                             // old accounts might not have a bungieGlobalDisplayName set up yet
@@ -132,16 +132,15 @@ async function infoForGuid(rdp, client) {
                                 : r.destinyUserInfo.displayName
                         }
                     }));
-                    page++;
                 })
-                .catch(() => results = null);
+                .catch(console.error);
         }
         while (members?.hasMore);
     } else {
         results = await getMembersInGuild(rdp.guild_id, client);
     }
 
-    const options = {tips: rdp.tips_option}
+    const options = { tips: rdp.tips_option }
     const [clan, guild, channel] = await Promise.all([
         rdp.clan_id ? import('../bungie-net-api/clan.mjs').then(
             ({ getClan }) => getClan(rdp.clan_id))
