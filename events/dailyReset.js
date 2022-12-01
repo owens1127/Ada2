@@ -30,12 +30,13 @@ module.exports = {
                 return sale.collectibleDefinition.hash
             });
 
+            let errorCount = 0;
             const failures = [];
             const start = Date.now();
             await Promise.all(guilds.map(g => {
                 if (!g.channel || !g.guild || !g.members) {
                     // no channel, guild, or error with members
-                    return failures.push(g);
+                    errorCount++;
                 } else {
                     return sendResetInfo(g, client, modHashes, adaSales).then(() => {
                         console.log(
@@ -43,15 +44,18 @@ module.exports = {
                     }).catch((e) => {
                         console.log(
                             `Failed to send info to ${g.guild.name} for ${g.clan?.name ?? 'N/A'}`);
-                        console.error(e);
+                        console.error(e.name);
                         failures.push(g)
                     });
                 }
             }))
-                .then(() => {
+                .then(() => {console.log(
+                    `=====================`);
+                    console.log(
+                        `Sent info to ${guilds.length - failures.length - errorCount} / ${guilds.length} servers`);
                     if (failures.length) {
-                        console.error(
-                            `Failed to send reset info to ${failures.length} servers. Retrying now...`);
+                        console.log(
+                            `Retrying to send reset info to ${failures.length} servers..`);
                         return retryFailures(failures, client, modHashes, adaSales).then(count => {
                             console.log(
                                 `Sent info to ${count} / ${failures.length} servers on the second attempt.`)
@@ -338,9 +342,7 @@ async function retryFailures(list, client, modHashes, adaSales) {
             return sendResetInfo(g, client, modHashes, adaSales).then(() => {
                 console.log(`Sent info to ${g.guild.name} for clan ${g.clan?.name ?? 'N/A'}`);
                 count++;
-            }).catch((e) => {
-                console.error(e);
-            });
+            }).catch();
         }
     })).then(() => count);
 }

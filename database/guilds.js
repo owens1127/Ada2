@@ -98,8 +98,7 @@ exports.getInfoByGuilds = async (client) => {
         /** @type {GuildInfoObject[]} */
         return Promise.all(
             data.map(rdp => infoForGuid(rdp, client)
-                .catch((e) => {
-                    console.error(`Error for guild ${rdp.guild_id}: ${e}`)
+                .catch(() => {
                     return {};
                 })));
     })
