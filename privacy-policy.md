@@ -1,6 +1,6 @@
 # Privacy Policy
 
-Last updated: December 02, 2022
+Last updated: December 01, 2022
 
 This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.
 
@@ -41,11 +41,18 @@ For the purposes of this Privacy Policy:
 
 ### Personal Data
 
-While using Our Service, We may ask You to provide Us with certain personally identifiable information that can be used to contact or identify You. Personally identifiable information may include, but is not limited to:
+While using Our Service, We may ask You to provide Us with certain personally identifiable information that can be used to identify You. Personally identifiable information may include, but is not limited to:
 - Destiny Membership ID 
 - Bungie Account Name
 - Discord ID
 - Usage Data
+
+### Group Data
+
+While using Our Service, We may ask You to provide Us with certain information that can be used to contact or identify your guild, clan, or group. This information may include, but is not limited to:
+- Destiny Clan name
+- Destiny Clan members
+- Discord Guild name
 
 ### Usage Data
 
