@@ -7,7 +7,6 @@
     "mysql2": "^2.3.3",
     "node-fetch-commonjs": "^3.2.4",
     "oodestiny": "^1.6.0",
-    "pm2": "^5.2.2",
     "sharp": "^0.31.2"
   },
   "scripts": {
@@ -20,6 +19,7 @@
   "devDependencies": {
     "dotenv": "^16.0.3",
     "env-cmd": "^10.0.1",
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20",
+    "pm2": "^5.2.2"
   }
 }
