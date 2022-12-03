@@ -342,7 +342,7 @@ async function retryFailures(list, client, modHashes, adaSales) {
             return sendResetInfo(g, client, modHashes, adaSales).then(() => {
                 console.log(`Sent info to ${g.guild.name} for clan ${g.clan?.name ?? 'N/A'}`);
                 count++;
-            }).catch();
+            }).catch(e => e); // do nothing
         }
     })).then(() => count);
 }

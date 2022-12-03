@@ -98,9 +98,7 @@ exports.getInfoByGuilds = async (client) => {
         /** @type {GuildInfoObject[]} */
         return Promise.all(
             data.map(rdp => infoForGuid(rdp, client)
-                .catch(() => {
-                    return {};
-                })));
+                .catch(() => ({}))));
     })
 }
 
@@ -121,8 +119,8 @@ async function infoForGuid(rdp, client) {
             await getMembersOfClan(rdp.clan_id, page)
                 .then(srogm => {
                     members = srogm;
-                    results.push(...members.results.filter(r => !!r.destinyUserInfo).map(r => {
-                        return {
+                    results.push(...members.results.filter(r => !!r.destinyUserInfo).map(r => (
+                        {
                             ...r.destinyUserInfo,
                             // old accounts might not have a bungieGlobalDisplayName set up yet
                             name: r.destinyUserInfo.bungieGlobalDisplayName
@@ -130,7 +128,7 @@ async function infoForGuid(rdp, client) {
                                 + r.destinyUserInfo.bungieGlobalDisplayNameCode
                                 : r.destinyUserInfo.displayName
                         }
-                    }));
+                    )));
                 })
                 .catch(console.error);
         }
