@@ -74,11 +74,13 @@ function reminders(client) {
         getMembersPerDelta(delta).then(ids => {
             ids.forEach(id => {
                 if (missing[id]) {
-                    client.users.fetch(id).then(u => u.send(
-                        `Hey <@${id}>, this is your reminder to go pick up ${missing[id].join(
-                            ' and ')} from Ada!`).catch(e => {
-                        console.error('Failed to message ' + u.username)
-                    }))
+                    client.users.fetch(id).then(u => {
+                        u.send(
+                            `Hey <@${id}>, this is your reminder to go pick up ${missing[id].join(
+                                ' and ')} from Ada!`)
+                            .then(m => console.log(`Sent mods pick-up reminder to ${u.username} at ${new Date().toLocaleTimeString()}`))
+                            .catch(e => console.error('Failed to message ' + u.username))
+                    })
                         .catch(e => {
                             console.error('Failed find user ' + id)
                         })
