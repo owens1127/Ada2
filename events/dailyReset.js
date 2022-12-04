@@ -8,8 +8,8 @@ const { modEnergyType, colorFromEnergy, adjustments, costs } = require('../bungi
 const { nextReset } = require('../misc/util.js');
 const config = require('../config.json');
 
-/** @type {{[person: string]: string[]}} */
-const peopleMissingMods = {}
+/** @type {Collection<string, Set<string>>} */
+const peopleMissingMods = new Collection();
 /** @type {Map<string, Promise<string>>}*/
 const modIcons = new Map();
 
@@ -49,10 +49,12 @@ module.exports = {
                     });
                 }
             }))
-                .then(() => {console.log(
-                    `=====================`);
+                .then(() => {
                     console.log(
-                        `Sent info to ${guilds.length - failures.length - errorCount} / ${guilds.length} servers`);
+                        `=====================`);
+                    console.log(
+                        `Sent info to ${guilds.length - failures.length
+                        - errorCount} / ${guilds.length} servers`);
                     if (failures.length) {
                         console.log(
                             `Retrying to send reset info to ${failures.length} servers..`);
@@ -139,9 +141,12 @@ async function sendResetInfo(guildInfo, client, modHashes, modDefs) {
                             pings.add(
                                 acct.discord);
                         }
-                        if (!peopleMissingMods[acct.discord]) peopleMissingMods[acct.discord] = [];
-                        peopleMissingMods[acct.discord].push(
-                            mod.def.inventoryDefinition.displayProperties.name);
+                        if (!peopleMissingMods.has(acct.discord)) {
+                            peopleMissingMods.set(
+                                acct.discord, new Set());
+                        }
+                        peopleMissingMods.get(acct.discord)
+                            .add(mod.def.inventoryDefinition.displayProperties.name);
                     });
                     if (accounts?.length) {
                         return person.name + ` [${accounts.map(a => `<@${a.discord}>`)
@@ -294,14 +299,13 @@ async function storeImage(def, client) {
 }
 
 function updateMissingCache() {
-    const reset = nextReset();
-    const data = JSON.stringify(
-        {
-            validTil: reset.getTime(),
-            missing: peopleMissingMods
-        }, null,
-        2);
+    const validTil = nextReset().getTime();
+    const missing = Object.assign({},
+        ...peopleMissingMods.mapValues(set => Array.from(set))
+            .map((v, k) => ({ [k]: v })))
+    const data = JSON.stringify({ validTil, missing }, null, 2);
     fs.writeFileSync('./local/reminders.json', data);
+    // console.log(missing);
 }
 
 /**

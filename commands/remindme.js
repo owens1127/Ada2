@@ -28,7 +28,11 @@ module.exports = {
             const delta = interaction.options.getNumber('delta');
             try {
                 const time = nextReset();
-                time.setUTCHours(config.UTCResetHour + delta);
+                if (delta >= 0) {
+                    time.setUTCHours(config.UTCResetHour + Math.floor(delta), Math.round((delta % 1) * 60));
+                } else {
+                    time.setUTCHours(config.UTCResetHour + Math.ceil(delta), Math.round((delta % 1) * 60));
+                }
                 const str = await remindString(interaction.user.id, delta);
                 await interaction.editReply({
                     content: `Updated reminder time to about ${str}. Your reminder will be DMed to you at <t:${time.getTime()
