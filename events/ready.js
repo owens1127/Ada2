@@ -70,7 +70,6 @@ function reminders(client) {
     const today = new Date();
     const delta = ((today.getUTCHours() - config.UTCResetHour) + 24) % 24
         + today.getUTCMinutes() / 60
-    console.log(delta);
     if (validTil > Date.now()) {
         getMembersPerDelta(delta).then(ids => {
             ids.forEach(id => {
